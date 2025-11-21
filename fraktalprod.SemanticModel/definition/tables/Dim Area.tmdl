@@ -1,0 +1,130 @@
+table 'Dim Area'
+	lineageTag: a95d9f28-5787-4f88-ae62-853698c7a57b
+
+	column omraade_key
+		dataType: int64
+		formatString: 0
+		lineageTag: b32fd495-2ee7-4a7b-9dc5-066b4e895ab9
+		summarizeBy: none
+		sourceColumn: omraade_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column omraade_id
+		dataType: int64
+		formatString: 0
+		lineageTag: ebad0ad9-22db-4321-8db1-ed5bff6f28e3
+		summarizeBy: sum
+		sourceColumn: omraade_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column omraade_navn
+		dataType: string
+		lineageTag: 22b9c834-1bab-4676-8fa7-faa1ce413b75
+		summarizeBy: none
+		sourceColumn: omraade_navn
+
+		annotation SummarizationSetBy = Automatic
+
+	column omraade_kode
+		dataType: string
+		lineageTag: cad5cb3a-53b4-4292-ae59-fde4112d7787
+		summarizeBy: none
+		sourceColumn: omraade_kode
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 5266f6e0-8e4f-4481-8348-dbaacad52e31
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column beskrivelse
+		dataType: string
+		lineageTag: d023856a-063e-4f49-95f5-169618ba89bb
+		summarizeBy: none
+		sourceColumn: beskrivelse
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 749a060e-47b7-4bc3-8257-62ad08c71c64
+		summarizeBy: none
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_from
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c20e7d17-608b-4e1d-9311-f40e474f4cfe
+		summarizeBy: none
+		sourceColumn: valid_from
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column valid_to
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: fec3cafe-e509-429f-9070-5638a3164fa5
+		summarizeBy: none
+		sourceColumn: valid_to
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	/// Område Farge (Region Color)
+	/// Assigns consistent color for each region for visualizations
+	column 'Område Farge' =
+			SWITCH(
+				'Dim Area'[omraade_kode],
+				"NO1", "#118DFF",  // Blue - Øst-Norge
+				"NO2", "#E66C37",  // Orange - Sør-Norge
+				"NO3", "#1AAB40",  // Green - Midt-Norge
+				"NO4", "#744EC2",  // Purple - Nord-Norge
+				"NO5", "#D9B300",  // Yellow - Vest-Norge
+				"#CCCCCC"          // Gray - Default
+			)
+		dataType: string
+		lineageTag: cc_omraadefarge
+		summarizeBy: none
+
+	/// Sort Order
+	/// Ensures consistent NO1-NO5 ordering in visuals
+	column 'Sort Order' =
+			SWITCH(
+				'Dim Area'[omraade_kode],
+				"NO1", 1,
+				"NO2", 2,
+				"NO3", 3,
+				"NO4", 4,
+				"NO5", 5,
+				99
+			)
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: cc_sortorder
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Dim Area' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    dw_dim_omraade = DyrWatt_Analytics{[Schema="dw",Item="dim_omraade"]}[Data]
+				in
+				    dw_dim_omraade
+

@@ -1,0 +1,243 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "table01_extremes",
+  "position": {
+    "x": 885,
+    "y": 51.25,
+    "z": 0,
+    "height": 260,
+    "width": 323.75,
+    "tabOrder": 2000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Extremes"
+                    }
+                  },
+                  "Property": "Area Name"
+                }
+              },
+              "queryRef": "Report - Extremes.Area Name",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Max Filling Rate %"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Report - Extremes.Max Filling Rate %)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Max Filling Date"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Report - Extremes.Max Filling Date)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Min Filling Rate %"
+                    }
+                  },
+                  "Function": 5
+                }
+              },
+              "queryRef": "Min(Report - Extremes.Min Filling Rate %)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Min Filling Date"
+                    }
+                  },
+                  "Function": 5
+                }
+              },
+              "queryRef": "Min(Report - Extremes.Min Filling Date)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Max Inflow GWh"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Report - Extremes.Max Inflow GWh)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Max Inflow Date"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Report - Extremes.Max Inflow Date)",
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "8D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#34495E'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnWidth": [
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "84.00000569357735D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(Report - Extremes.Max Filling Rate %)"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "158.00000309299872D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(Report - Extremes.Max Filling Date)"
+          }
+        }
+      ]
+    }
+  }
+}

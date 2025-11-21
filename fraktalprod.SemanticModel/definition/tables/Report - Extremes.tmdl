@@ -1,0 +1,101 @@
+table 'Report - Extremes'
+	lineageTag: c7b3a162-7306-4145-b26c-039fc5e682e6
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 2914651e-7a0f-4d8a-8dad-9790f9d877ca
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Code'
+		dataType: string
+		lineageTag: 45787cfe-a2f1-4c47-a379-0e77a85b2a7d
+		summarizeBy: none
+		sourceColumn: Area Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Name'
+		dataType: string
+		lineageTag: 6d621efb-cef8-469c-b7da-25fba424eb92
+		summarizeBy: none
+		sourceColumn: Area Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Max Filling Rate %'
+		dataType: double
+		lineageTag: 869d25e4-ae0e-4a28-9831-6076bdfd5624
+		summarizeBy: sum
+		sourceColumn: Max Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Max Filling Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 65482943-daec-41e4-9840-5a41bf0a8a8c
+		summarizeBy: none
+		sourceColumn: Max Filling Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Min Filling Rate %'
+		dataType: double
+		lineageTag: 92004e3f-4e1d-4601-b7d8-daa1820ef2ec
+		summarizeBy: sum
+		sourceColumn: Min Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Min Filling Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9760fca2-86cf-4f5b-a0cf-23a9af30b566
+		summarizeBy: none
+		sourceColumn: Min Filling Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Max Inflow GWh'
+		dataType: double
+		lineageTag: 224a94bc-039a-4efc-954d-6ace187d8654
+		summarizeBy: sum
+		sourceColumn: Max Inflow GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Max Inflow Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 99f70b90-2ac2-4854-a12a-8ac3658fe525
+		summarizeBy: none
+		sourceColumn: Max Inflow Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'report vw_extremes' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    report_vw_extremes = DyrWatt_Analytics{[Schema="report",Item="vw_extremes"]}[Data]
+				in
+				    report_vw_extremes
+

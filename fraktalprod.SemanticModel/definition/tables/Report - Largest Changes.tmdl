@@ -1,0 +1,114 @@
+table 'Report - Largest Changes'
+	lineageTag: 239464ec-bded-4e47-a901-ec7e070e7170
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 98ebb988-282c-4af8-a945-11566981c771
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 154de4d1-2d73-4966-9c26-d0aa5c558c1e
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 1385de4c-c0a3-44a8-9df0-a9fe2707f9ab
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Code'
+		dataType: string
+		lineageTag: 2b2725c9-64d1-4b0f-94b7-84c338cbb886
+		summarizeBy: none
+		sourceColumn: Area Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Name'
+		dataType: string
+		lineageTag: 6218c077-5721-4e17-8313-be11cb48d4ae
+		summarizeBy: none
+		sourceColumn: Area Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Filling Rate %'
+		dataType: double
+		lineageTag: c802dbe1-ca11-4103-b592-f2f628ec5cfa
+		summarizeBy: sum
+		sourceColumn: Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Previous Filling Rate %'
+		dataType: double
+		lineageTag: 6722092f-f9d4-494e-bd48-64442aa7c7d6
+		summarizeBy: sum
+		sourceColumn: Previous Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Daily Change %'
+		dataType: double
+		lineageTag: b6f7305a-6232-4c53-a894-b75d72c6c14d
+		summarizeBy: sum
+		sourceColumn: Daily Change %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Net Change GWh'
+		dataType: double
+		lineageTag: 56fdfe94-7774-42c3-bdea-72edf0daf888
+		summarizeBy: sum
+		sourceColumn: Net Change GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Change Magnitude'
+		dataType: string
+		lineageTag: 7ce6c3d3-c610-460a-ab33-75bb236cad11
+		summarizeBy: none
+		sourceColumn: Change Magnitude
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Change Direction'
+		dataType: string
+		lineageTag: cb35ed61-492a-4ede-8521-3f60adcb1ef0
+		summarizeBy: none
+		sourceColumn: Change Direction
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'report vw_largest_changes' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    report_vw_largest_changes = DyrWatt_Analytics{[Schema="report",Item="vw_largest_changes"]}[Data]
+				in
+				    report_vw_largest_changes
+

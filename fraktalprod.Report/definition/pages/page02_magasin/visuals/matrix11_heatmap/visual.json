@@ -1,0 +1,73 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "matrix11_heatmap",
+  "position": {
+    "x": 331.45468392993143,
+    "y": 410.41888804265039,
+    "z": 11000,
+    "height": 310.00761614622996,
+    "width": 601.49276466108142,
+    "tabOrder": 12000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Columns": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Area"
+                    }
+                  },
+                  "Property": "omraade_navn"
+                }
+              },
+              "queryRef": "Dim Area.omraade_navn",
+              "active": true
+            }
+          ]
+        },
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Date"
+                    }
+                  },
+                  "Property": "date"
+                }
+              },
+              "queryRef": "Dim Date.date",
+              "active": true
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Gjennomsnittlig Fyllingsgrad (%)"
+                }
+              },
+              "queryRef": "KPI Measures.Gjennomsnittlig Fyllingsgrad (%)",
+              "active": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

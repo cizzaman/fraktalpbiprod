@@ -1,0 +1,65 @@
+relationship 8242fbc0-0265-4798-ba07-d9dee18c722f
+	fromColumn: 'Fact Weather'.date_key
+	toColumn: 'Dim Date'.date_key
+
+	annotation PBI_IsFromSource = FS
+
+relationship 1c949412-1f6c-4124-bf70-7c3de659b358
+	fromColumn: 'Fact Weather'.station_key
+	toColumn: 'Dim Weather Station'.station_key
+
+	annotation PBI_IsFromSource = FS
+
+relationship 51cf6963-b564-47bc-a30d-695fce198dae
+	fromColumn: 'Fact Reservoir'.date_key
+	toColumn: 'Dim Date'.date_key
+
+	annotation PBI_IsFromSource = FS
+
+relationship 31b2d66d-99fd-4c25-9cac-0433e15c0cc6
+	fromColumn: 'Fact Reservoir'.omraade_key
+	toColumn: 'Dim Area'.omraade_key
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_extremes_to_dim_omraade
+	fromColumn: 'Report - Extremes'.'Area Code'
+	toColumn: 'Dim Area'.omraade_kode
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_largest_changes_to_dim_date
+	fromColumn: 'Report - Largest Changes'.Date
+	toColumn: 'Dim Date'.date
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_largest_changes_to_dim_omraade
+	fromColumn: 'Report - Largest Changes'.'Area Code'
+	toColumn: 'Dim Area'.omraade_kode
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_period_comparison_to_dim_omraade
+	fromColumn: 'Report - Period Comparison'.'Area Code'
+	toColumn: 'Dim Area'.omraade_kode
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_weather_daily_to_dim_date
+	fromColumn: 'Report - Weather Daily'.Date
+	toColumn: 'Dim Date'.date
+
+	annotation PBI_IsFromSource = FS
+
+relationship vw_weather_daily_to_dim_weather_station
+	fromColumn: 'Report - Weather Daily'.'Station Name'
+	toColumn: 'Dim Weather Station'.station_name
+
+	annotation PBI_IsFromSource = FS
+
+relationship 6499c9c7-993e-0f6a-4fa2-dc6b71cec310
+	isActive: false
+	fromColumn: 'Report - Weather Daily'.Region
+	toColumn: 'Dim Area'.region
+

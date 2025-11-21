@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "3fce1da5a603e0068215",
+  "position": {
+    "x": 500,
+    "y": 220,
+    "z": 9000,
+    "height": 150,
+    "width": 230,
+    "tabOrder": 10000
+  },
+  "visual": {
+    "visualType": "gauge",
+    "query": {
+      "queryState": {
+        "TargetValue": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Fyllingsgrad Target (%)"
+                }
+              },
+              "queryRef": "Target",
+              "active": true
+            }
+          ]
+        },
+        "Value": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Gjennomsnittlig Fyllingsgrad (%)"
+                }
+              },
+              "queryRef": "KPI Measures.Gjennomsnittlig Fyllingsgrad (%)",
+              "active": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

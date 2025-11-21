@@ -1,0 +1,83 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmarksMetadata/1.0.0/schema.json",
+  "items": [
+    {
+      "name": "fc0ccea87e2fa97b9865"
+    },
+    {
+      "name": "cc127ffc0b9ca2462279"
+    },
+    {
+      "name": "3b2c696e016d1ff1beb7"
+    },
+    {
+      "name": "3d7a67d89de9d34d4336"
+    },
+    {
+      "name": "fc135bbf6884c8577962"
+    },
+    {
+      "name": "b03464e16808c5781ff0"
+    },
+    {
+      "name": "b5cf06680dcbadbd82fb"
+    },
+    {
+      "name": "8a744668b08ff30ab7d1"
+    },
+    {
+      "name": "fc414c6912be431ae7cc"
+    },
+    {
+      "name": "db013962587abdef5a05"
+    },
+    {
+      "name": "401c7af760260a2f3634"
+    },
+    {
+      "name": "e855b5e01226fecbade6"
+    },
+    {
+      "name": "93557b9bdf664ce4435e"
+    },
+    {
+      "name": "c7689dce3206382a34e9"
+    },
+    {
+      "name": "4b56ba8efa89814da993"
+    },
+    {
+      "name": "5faf74485ecaa2b0b02d"
+    },
+    {
+      "name": "9cc838bd58809ee04065"
+    },
+    {
+      "name": "728a2e9daa336eec15b0"
+    },
+    {
+      "name": "6f523521978d4511fd71"
+    },
+    {
+      "name": "7eaaf21d351aca28b61a"
+    },
+    {
+      "name": "c655b7d0cb92f614a71a"
+    },
+    {
+      "name": "fcd042b583e737f0327d"
+    },
+    {
+      "name": "4a2d26896dce5b1ffecc"
+    },
+    {
+      "name": "1e056dc67376ecf3a618"
+    },
+    {
+      "name": "421c79d7fe2fd97e54de"
+    },
+    {
+      "name": "8ff23d9523d574c08c77"
+    }
+  ]
+}

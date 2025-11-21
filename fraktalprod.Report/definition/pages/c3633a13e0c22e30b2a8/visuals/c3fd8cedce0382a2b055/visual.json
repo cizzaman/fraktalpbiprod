@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "c3fd8cedce0382a2b055",
+  "position": {
+    "x": 680,
+    "y": 40,
+    "z": 1000,
+    "height": 230,
+    "width": 600,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Area"
+                    }
+                  },
+                  "Property": "omraade_navn"
+                }
+              },
+              "queryRef": "Dim Area.omraade_navn",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Gjennomsnittlig Fyllingsgrad (%)"
+                }
+              },
+              "queryRef": "KPI Measures.Gjennomsnittlig Fyllingsgrad (%)",
+              "active": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

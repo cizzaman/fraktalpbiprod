@@ -1,0 +1,146 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "53af82b460706d92c010",
+  "position": {
+    "x": 340,
+    "y": 0,
+    "z": 5000,
+    "height": 260,
+    "width": 600,
+    "tabOrder": 4000
+  },
+  "visual": {
+    "visualType": "clusteredBarChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Extremes"
+                    }
+                  },
+                  "Property": "Area Code"
+                }
+              },
+              "queryRef": "Report - Extremes.Area Code",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Max Filling Rate %"
+                    }
+                  },
+                  "Function": 4
+                }
+              },
+              "queryRef": "Max(Report - Extremes.Max Filling Rate %)",
+              "active": true,
+              "displayName": "Maks Fyllingsgrad"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Extremes"
+                        }
+                      },
+                      "Property": "Min Filling Rate %"
+                    }
+                  },
+                  "Function": 5
+                }
+              },
+              "queryRef": "Min(Report - Extremes.Min Filling Rate %)",
+              "active": true,
+              "displayName": "Min Fyllingsgrad"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Top'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#1AAB40'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Max(Report - Extremes.Max Filling Rate %)"
+          }
+        },
+        {
+          "properties": {
+            "fill": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D62728'"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Min(Report - Extremes.Min Filling Rate %)"
+          }
+        }
+      ]
+    }
+  }
+}

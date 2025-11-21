@@ -1,0 +1,116 @@
+table 'Dim Weather Station'
+	lineageTag: 43d33fb5-979b-4a8a-bc4a-5f5cbb91e1e5
+
+	/// Antall Aktive Værstasjoner
+	/// Teller antall aktive værstasjoner
+	measure 'Antall Værstasjoner' =
+			VAR _Count = DISTINCTCOUNT('Dim Weather Station'[station_key])
+			RETURN IF(ISBLANK(_Count) || _Count = 0, 0, _Count)
+		formatString: #,##0
+		lineageTag: m_antallfstasjoner
+
+	column station_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 6fcb08bc-f34a-4278-8eb3-04578ec0212a
+		summarizeBy: none
+		sourceColumn: station_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column station_id
+		dataType: string
+		lineageTag: 7f869587-42a5-4618-97aa-7dbc4f86d573
+		summarizeBy: none
+		sourceColumn: station_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column station_name
+		dataType: string
+		lineageTag: 1aeb05ec-8662-4edb-ac63-ed03fe825357
+		summarizeBy: none
+		sourceColumn: station_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column latitude
+		dataType: double
+		lineageTag: af6e2de1-7f22-422a-982e-51326f70f2d6
+		summarizeBy: sum
+		sourceColumn: latitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column longitude
+		dataType: double
+		lineageTag: 71a8a983-b2fe-4f24-9c69-e35683525070
+		summarizeBy: sum
+		sourceColumn: longitude
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column elevation
+		dataType: double
+		lineageTag: d10966e4-79e1-40be-8705-934face121c1
+		summarizeBy: sum
+		sourceColumn: elevation
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column omraade_id
+		dataType: int64
+		formatString: 0
+		lineageTag: a618d834-d8d6-4ed5-be5d-04b098de1714
+		summarizeBy: sum
+		sourceColumn: omraade_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_active
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 52758c25-47bc-47a0-871e-80ed7d012c07
+		summarizeBy: none
+		sourceColumn: is_active
+
+		annotation SummarizationSetBy = Automatic
+
+	column valid_from
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c10886bc-a14e-49ef-89dc-e626aa194283
+		summarizeBy: none
+		sourceColumn: valid_from
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column valid_to
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 02deafbb-73e0-40e4-bdb6-f3c2e6cada8d
+		summarizeBy: none
+		sourceColumn: valid_to
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'Dim Weather Station' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    dw_dim_weather_station = DyrWatt_Analytics{[Schema="dw",Item="dim_weather_station"]}[Data]
+				in
+				    dw_dim_weather_station
+

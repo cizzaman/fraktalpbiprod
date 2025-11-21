@@ -1,0 +1,96 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "a34bc3518e607b686118",
+  "position": {
+    "x": 995,
+    "y": 518.75,
+    "z": 4000,
+    "height": 152.5,
+    "width": 265,
+    "tabOrder": 7000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Area"
+                    }
+                  },
+                  "Property": "omraade_navn"
+                }
+              },
+              "queryRef": "Dim Area.omraade_navn",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Area"
+                    }
+                  },
+                  "Property": "omraade_navn"
+                }
+              },
+              "queryRef": "Dim Area.omraade_navn",
+              "active": true
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Gjennomsnittlig Fyllingsgrad (%)"
+                }
+              },
+              "queryRef": "KPI Measures.Gjennomsnittlig Fyllingsgrad (%)1",
+              "nativeQueryRef": "Gjennomsnittlig Fyllingsgrad (%)",
+              "active": false
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Fyllingsgrad Status"
+                }
+              },
+              "queryRef": "KPI Measures.Fyllingsgrad Status1",
+              "nativeQueryRef": "Fyllingsgrad Status",
+              "active": false
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "Risiko Score"
+                }
+              },
+              "queryRef": "KPI Measures.Risiko Score1",
+              "nativeQueryRef": "Risiko Score",
+              "active": false
+            }
+          ]
+        }
+      }
+    }
+  }
+}

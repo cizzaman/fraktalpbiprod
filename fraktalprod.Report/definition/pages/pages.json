@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.0.0/schema.json",
+  "pageOrder": [
+    "2840aea45e739cc01779",
+    "page01_executive",
+    "page02_magasin",
+    "page03_tilsig",
+    "page04_vaer",
+    "07060403200b635c1655",
+    "page05_yoy",
+    "4ef478bc7b5732098040",
+    "page06_ekstrem",
+    "4e8f4cafd70378c1b393",
+    "a6086e861582a149543c",
+    "page07_maanedlig",
+    "6158eef0001026a73126",
+    "c3633a13e0c22e30b2a8",
+    "11ba20587a044202798d",
+    "page_magasinstatistikk",
+    "page_ukesoversikt"
+  ],
+  "activePageName": "page_magasinstatistikk"
+}

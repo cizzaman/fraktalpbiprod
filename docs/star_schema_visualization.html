@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⭐ DyrWatt Analytics - Stjernemodell Visualisering</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+            font-size: 1.3em;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-bottom: 60px;
+            flex-wrap: wrap;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .legend-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            border: 3px solid #2c3e50;
+        }
+
+        .legend-box.dimension { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .legend-box.fact { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .legend-box.view { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+
+        .legend-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .star-diagram {
+            position: relative;
+            width: 100%;
+            height: 1100px;
+            margin: 60px 0;
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        /* SVG for relationships */
+        .relationships {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .relationship-line {
+            stroke: #34495e;
+            stroke-width: 3;
+            fill: none;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+        }
+
+        .relationship-line:hover {
+            stroke: #f39c12;
+            stroke-width: 5;
+            opacity: 1;
+        }
+
+        .relationship-marker {
+            fill: #34495e;
+        }
+
+        .relationship-label {
+            fill: #2c3e50;
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .table-box {
+            position: absolute;
+            padding: 25px 30px;
+            border-radius: 15px;
+            border: 4px solid #2c3e50;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 240px;
+            z-index: 10;
+        }
+
+        .table-box:hover {
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            z-index: 100;
+            border-color: #f39c12;
+        }
+
+        .table-box.dimension {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .table-box.fact {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border-color: #c0392b;
+        }
+
+        .table-box.view {
+            background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);
+            color: white;
+            border-color: #d68910;
+        }
+
+        .table-type {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .table-name {
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            border-bottom: 2px solid rgba(255,255,255,0.4);
+            padding-bottom: 10px;
+        }
+
+        .table-info {
+            font-size: 1em;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .table-rows {
+            margin-top: 8px;
+            font-size: 0.9em;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+
+        /* Positioning - More spread out */
+        /* Top row - Dimensions */
+        #dim_date { top: 60px; left: 50%; transform: translateX(-50%); }
+        #dim_weather_station { top: 60px; right: 120px; }
+        #dim_month { top: 60px; left: 120px; }
+
+        /* Middle left - Dimension */
+        #dim_omraade { top: 420px; left: 50px; }
+
+        /* Center - Fact tables (in a vertical stack with more spacing) */
+        #fact_magasin { top: 340px; left: 50%; transform: translateX(-50%); }
+        #fact_weather { top: 520px; left: 50%; transform: translateX(-50%); }
+        #fact_monthly { top: 700px; left: 50%; transform: translateX(-50%); }
+
+        /* Right side - Views (vertical distribution) */
+        #vw_area_combined { top: 200px; right: 80px; }
+        #vw_weather_daily { top: 380px; right: 80px; }
+        #vw_period_comparison { top: 560px; right: 80px; }
+
+        /* Bottom - Views */
+        #vw_extremes { top: 880px; left: 180px; }
+        #vw_largest_changes { top: 880px; left: 50%; transform: translateX(-50%); }
+        #vw_monthly_summary { top: 880px; right: 180px; }
+
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .info-panel {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 35px;
+            border-radius: 15px;
+            margin-top: 35px;
+            border-left: 6px solid #3498db;
+        }
+
+        .info-panel h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .info-panel ul {
+            list-style-position: inside;
+            line-height: 2;
+            color: #34495e;
+            font-size: 1.05em;
+        }
+
+        .relationship-info {
+            background: #fff3cd;
+            border-left: 6px solid #f39c12;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 8px;
+        }
+
+        .cardinality-badge {
+            display: inline-block;
+            background: #34495e;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 1600px) {
+            .star-diagram {
+                height: 1400px;
+            }
+
+            #dim_date { top: 80px; }
+            #dim_weather_station { top: 80px; right: 60px; }
+            #dim_month { top: 80px; left: 60px; }
+            #dim_omraade { left: 30px; }
+            #vw_area_combined { right: 40px; }
+            #vw_weather_daily { right: 40px; }
+            #vw_period_comparison { right: 40px; }
+            #vw_extremes { left: 100px; top: 1000px; }
+            #vw_largest_changes { top: 1000px; }
+            #vw_monthly_summary { right: 100px; top: 1000px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⭐ DyrWatt Analytics - Stjernemodell</h1>
+        <p class="subtitle">Magasin og Vær Dashboard - Data Warehouse Arkitektur</p>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box dimension"></div>
+                <div class="legend-text">📊 <strong>DIMENSION</strong><br><small>Beskrivende data (Hvem, Hva, Når, Hvor)</small></div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box fact"></div>
+                <div class="legend-text">💾 <strong>FACT TABLE</strong><br><small>Målinger og transaksjoner (Tall)</small></div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box view"></div>
+                <div class="legend-text">🔄 <strong>ANALYTICAL VIEW</strong><br><small>Pre-joined rapporter (Ytelse)</small></div>
+            </div>
+        </div>
+
+        <div class="star-diagram">
+            <svg class="relationships" xmlns="http://www.w3.org/2000/svg">
+                <!-- Define arrow markers -->
+                <defs>
+                    <marker id="arrowhead-one" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" class="relationship-marker" />
+                    </marker>
+                    <marker id="arrowhead-many" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+                        <path d="M0,3 L6,6 L0,9 M3,0 L9,6 L3,12" stroke="#34495e" fill="none" stroke-width="2"/>
+                    </marker>
+                </defs>
+
+                <!-- fact_magasin relationships -->
+                <line x1="900" y1="160" x2="900" y2="350" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="920" y="250" class="relationship-label">*:1</text>
+
+                <line x1="300" y1="480" x2="770" y2="410" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="500" y="440" class="relationship-label">*:1</text>
+
+                <!-- fact_weather relationships -->
+                <line x1="900" y1="160" x2="900" y2="530" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="920" y="340" class="relationship-label">*:1</text>
+
+                <line x1="1210" y1="180" x2="1020" y2="540" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="1080" y="350" class="relationship-label">*:1</text>
+
+                <!-- fact_magasin_monthly relationships -->
+                <line x1="350" y1="180" x2="820" y2="710" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="550" y="440" class="relationship-label">*:1</text>
+
+                <line x1="300" y1="520" x2="780" y2="720" class="relationship-line" marker-end="url(#arrowhead-one)" />
+                <text x="500" y="620" class="relationship-label">*:1</text>
+
+                <!-- vw_area_combined relationships -->
+                <line x1="900" y1="160" x2="1300" y2="240" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="1070" y="190" class="relationship-label">*:1</text>
+
+                <line x1="300" y1="480" x2="1300" y2="270" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="750" y="370" class="relationship-label">*:1</text>
+
+                <!-- vw_weather_daily relationships -->
+                <line x1="900" y1="160" x2="1300" y2="410" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="1070" y="280" class="relationship-label">*:1</text>
+
+                <line x1="1210" y1="180" x2="1300" y2="430" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="1240" y="300" class="relationship-label">*:1</text>
+
+                <!-- vw_period_comparison to dim_omraade -->
+                <line x1="300" y1="520" x2="1300" y2="590" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="750" y="550" class="relationship-label">*:1</text>
+
+                <!-- vw_extremes to dim_omraade -->
+                <line x1="300" y1="520" x2="350" y2="890" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="310" y="700" class="relationship-label">*:1</text>
+
+                <!-- vw_largest_changes relationships -->
+                <line x1="900" y1="160" x2="900" y2="890" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="920" y="520" class="relationship-label">*:1</text>
+
+                <line x1="300" y1="520" x2="830" y2="910" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="550" y="710" class="relationship-label">*:1</text>
+
+                <!-- vw_monthly_summary to dim_omraade -->
+                <line x1="300" y1="520" x2="1450" y2="900" class="relationship-line" marker-end="url(#arrowhead-one)" stroke-dasharray="5,5"/>
+                <text x="850" y="710" class="relationship-label">*:1</text>
+            </svg>
+
+            <!-- Dimensions -->
+            <div class="table-box dimension" id="dim_date">
+                <div class="table-type">🔷 DIMENSION</div>
+                <div class="table-name">📅 dim_date</div>
+                <div class="table-info">Kalenderdimensjon</div>
+                <div class="table-info">PK: date_key (INT)</div>
+                <div class="table-rows">4,018 rader (2020-2030)</div>
+            </div>
+
+            <div class="table-box dimension" id="dim_omraade">
+                <div class="table-type">🔷 DIMENSION</div>
+                <div class="table-name">🗺️ dim_omraade</div>
+                <div class="table-info">Strømområder</div>
+                <div class="table-info">PK: omraade_key (INT)</div>
+                <div class="table-rows">5 rader (NO1-NO5)</div>
+            </div>
+
+            <div class="table-box dimension" id="dim_weather_station">
+                <div class="table-type">🔷 DIMENSION</div>
+                <div class="table-name">🌡️ dim_weather_station</div>
+                <div class="table-info">Værstasjoner</div>
+                <div class="table-info">PK: station_key (INT)</div>
+                <div class="table-rows">10 rader (2 per område)</div>
+            </div>
+
+            <div class="table-box dimension" id="dim_month">
+                <div class="table-type">🔷 DIMENSION</div>
+                <div class="table-name">📆 dim_month</div>
+                <div class="table-info">Månedsdimensjon</div>
+                <div class="table-info">PK: month_key (INT)</div>
+                <div class="table-rows">120 rader (10 år)</div>
+            </div>
+
+            <!-- Fact Tables -->
+            <div class="table-box fact" id="fact_magasin">
+                <div class="table-type">🔶 FACT TABLE</div>
+                <div class="table-name">💧 fact_magasin</div>
+                <div class="table-info">Daglige magasinmålinger</div>
+                <div class="table-info">FK: date_key, omraade_key</div>
+                <div class="table-rows">450 rader (90d × 5 områder)</div>
+            </div>
+
+            <div class="table-box fact" id="fact_weather">
+                <div class="table-type">🔶 FACT TABLE</div>
+                <div class="table-name">⛈️ fact_weather</div>
+                <div class="table-info">Daglige værmålinger</div>
+                <div class="table-info">FK: date_key, station_key</div>
+                <div class="table-rows">900 rader (90d × 10 stasjoner)</div>
+            </div>
+
+            <div class="table-box fact" id="fact_monthly">
+                <div class="table-type">🔶 FACT TABLE</div>
+                <div class="table-name">📊 fact_magasin_monthly</div>
+                <div class="table-info">Månedlige aggregeringer</div>
+                <div class="table-info">FK: month_key, omraade_key</div>
+                <div class="table-rows">20 rader (4m × 5 områder)</div>
+            </div>
+
+            <!-- Analytical Views -->
+            <div class="table-box view" id="vw_area_combined">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">🔗 vw_area_combined</div>
+                <div class="table-info">Magasin + Vær kombinert</div>
+                <div class="table-info">FK: Date, Area Code</div>
+                <div class="table-rows">450 rader (daglig)</div>
+            </div>
+
+            <div class="table-box view" id="vw_weather_daily">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">🌦️ vw_weather_daily</div>
+                <div class="table-info">Daglig vær med YoY</div>
+                <div class="table-info">FK: Date, Station Name</div>
+                <div class="table-rows">900 rader (daglig)</div>
+            </div>
+
+            <div class="table-box view" id="vw_period_comparison">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">📊 vw_period_comparison</div>
+                <div class="table-info">Year-over-Year sammenligning</div>
+                <div class="table-info">FK: Area Code</div>
+                <div class="table-rows">40 rader (2025 vs 2024)</div>
+            </div>
+
+            <div class="table-box view" id="vw_extremes">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">⚡ vw_extremes</div>
+                <div class="table-info">Ekstremverdier per område</div>
+                <div class="table-info">FK: Area Code</div>
+                <div class="table-rows">10 rader (97.8% ⬇️)</div>
+            </div>
+
+            <div class="table-box view" id="vw_largest_changes">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">📉 vw_largest_changes</div>
+                <div class="table-info">Største daglige endringer</div>
+                <div class="table-info">FK: Date, Area Code</div>
+                <div class="table-rows">~100 rader (77.8% ⬇️)</div>
+            </div>
+
+            <div class="table-box view" id="vw_monthly_summary">
+                <div class="table-type">🔸 ANALYTICAL VIEW</div>
+                <div class="table-name">📈 vw_monthly_summary</div>
+                <div class="table-info">Månedlig oppsummering</div>
+                <div class="table-info">FK: Area Code</div>
+                <div class="table-rows">20 rader (95.6% ⬇️)</div>
+            </div>
+        </div>
+
+        <div class="relationship-info">
+            <strong>💡 Relasjonssymboler:</strong><br>
+            <strong>Heltrukne linjer</strong> = Fakta-tabeller til Dimensjoner (surrogate keys: date_key, omraade_key, etc.)<br>
+            <strong>Stiplede linjer</strong> = Analytiske Views til Dimensjoner (natural keys: Date, Area Code, etc.)<br>
+            <strong>*:1</strong> = Many-to-One relasjon (standard i stjernemodell)<br>
+            <strong>PK</strong> = Primary Key | <strong>FK</strong> = Foreign Key
+        </div>
+
+        <div class="stats-panel">
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Dimensjoner<br>(DIMENSION)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Fakta-tabeller<br>(FACT TABLE)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">Analytiske Views<br>(ANALYTICAL VIEW)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Aktive Relasjoner<br>(Many-to-One)</div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h3>🔷 DIMENSJONER (Beskrivende Data)</h3>
+            <ul>
+                <li><strong>dim_date:</strong> Tid-dimensjon - dato, år, måned, kvartal, uke <span class="cardinality-badge">4,018 rader</span></li>
+                <li><strong>dim_omraade:</strong> Geografisk dimensjon - NO1, NO2, NO3, NO4, NO5 <span class="cardinality-badge">5 rader</span></li>
+                <li><strong>dim_weather_station:</strong> Værstasjon-dimensjon - 10 stasjoner med lat/lon <span class="cardinality-badge">10 rader</span></li>
+                <li><strong>dim_month:</strong> Måned-dimensjon - år-måned kombinasjoner <span class="cardinality-badge">120 rader</span></li>
+            </ul>
+        </div>
+
+        <div class="info-panel" style="margin-top: 20px; border-left-color: #e74c3c;">
+            <h3>🔶 FAKTA-TABELLER (Målinger & Tall)</h3>
+            <ul>
+                <li><strong>fact_magasin:</strong> Daglige målinger - fyllingsgrad, tilsig, tapping per dag/område <span class="cardinality-badge">450 rader</span></li>
+                <li><strong>fact_weather:</strong> Daglige værmålinger - nedbør, temperatur per dag/stasjon <span class="cardinality-badge">900 rader</span></li>
+                <li><strong>fact_magasin_monthly:</strong> Månedlige aggregeringer - avg/min/max per måned/område <span class="cardinality-badge">20 rader</span></li>
+            </ul>
+        </div>
+
+        <div class="info-panel" style="margin-top: 20px; border-left-color: #f39c12;">
+            <h3>🔸 ANALYTISKE VIEWS (Pre-joined for Ytelse)</h3>
+            <ul>
+                <li><strong>vw_area_combined:</strong> Kombinerer magasin + vær data for korrelasjon-analyse</li>
+                <li><strong>vw_monthly_summary:</strong> Månedlig oppsummering - 95.6% datareduksjon!</li>
+                <li><strong>vw_extremes:</strong> Maks/min verdier med datoer - 97.8% datareduksjon!</li>
+                <li><strong>vw_largest_changes:</strong> Største daglige endringer - filtrert til Large/Medium</li>
+                <li><strong>vw_period_comparison:</strong> Year-over-Year sammenligning (2025 vs 2024)</li>
+                <li><strong>vw_weather_daily:</strong> Daglig vær med YoY og geografiske koordinater</li>
+            </ul>
+        </div>
+
+        <div class="info-panel" style="margin-top: 20px; background: #d5f4e6; border-left-color: #1aab40;">
+            <h3>⭐ Stjernemodell Prinsipper</h3>
+            <ul>
+                <li><strong>Denormaliserte dimensjoner:</strong> Alle attributter i én tabell (ikke snowflake)</li>
+                <li><strong>Many-to-One relasjoner:</strong> Mange fakta-rader peker til én dimensjon-rad</li>
+                <li><strong>Single-direction filtering:</strong> Fra fakta/views → til dimensjoner</li>
+                <li><strong>Surrogate keys:</strong> INT keys i fakta-tabeller for ytelse (date_key, omraade_key)</li>
+                <li><strong>Natural keys:</strong> DATE/VARCHAR keys i views for forståelse (Date, Area Code)</li>
+                <li><strong>Pre-aggregering:</strong> Views reduserer datamengde med 77-95% for raskere queries</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px;">
+            <p style="font-size: 1.4em; margin-bottom: 15px;">📚 <strong>Komplett Dokumentasjon</strong></p>
+            <p style="font-size: 1.1em;">
+                <code style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px;">STAR_SCHEMA_SIMPLE.md</code> - Enkel forklaring<br>
+                <code style="background: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-top: 10px; display: inline-block;">STAR_SCHEMA_DETAILED.md</code> - Teknisk dybdeforklaring
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced hover effects
+        document.querySelectorAll('.table-box').forEach(box => {
+            box.addEventListener('mouseenter', function() {
+                this.style.zIndex = '100';
+
+                // Highlight related relationship lines
+                const boxId = this.id;
+                document.querySelectorAll('.relationship-line').forEach(line => {
+                    line.style.opacity = '0.1';
+                });
+            });
+
+            box.addEventListener('mouseleave', function() {
+                this.style.zIndex = '10';
+
+                // Reset all lines
+                document.querySelectorAll('.relationship-line').forEach(line => {
+                    line.style.opacity = '0.4';
+                });
+            });
+        });
+
+        // Click to show detailed info
+        document.querySelectorAll('.table-box').forEach(box => {
+            box.addEventListener('click', function() {
+                const type = this.querySelector('.table-type').textContent;
+                const name = this.querySelector('.table-name').textContent;
+                const info = this.querySelectorAll('.table-info');
+                const rows = this.querySelector('.table-rows').textContent;
+
+                let infoText = '';
+                info.forEach(i => infoText += i.textContent + '\n');
+
+                alert(`${type}\n\n${name}\n\n${infoText}\n${rows}\n\n✨ Klikk OK for å lukke.`);
+            });
+        });
+
+        // Smooth scroll on load
+        window.addEventListener('load', function() {
+            document.querySelector('.star-diagram').scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        });
+    </script>
+</body>
+</html>

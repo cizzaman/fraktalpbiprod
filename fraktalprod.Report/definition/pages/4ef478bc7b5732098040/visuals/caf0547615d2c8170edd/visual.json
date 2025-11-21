@@ -1,0 +1,171 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "caf0547615d2c8170edd",
+  "position": {
+    "x": 262.23914699162219,
+    "y": 423.09215536938308,
+    "z": 5000,
+    "height": 264.18888042650417,
+    "width": 738.94897182025886,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Period Comparison"
+                    }
+                  },
+                  "Property": "Month"
+                }
+              },
+              "queryRef": "Report - Period Comparison.Month",
+              "active": true
+            }
+          ]
+        },
+        "Series": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Period Comparison"
+                    }
+                  },
+                  "Property": "Area Code"
+                }
+              },
+              "queryRef": "Report - Period Comparison.Area Code",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Period Comparison"
+                        }
+                      },
+                      "Property": "Avg Filling Rate %"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Avg(Report - Period Comparison.Avg Filling Rate %)",
+              "active": true,
+              "displayName": "2025"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Period Comparison"
+                        }
+                      },
+                      "Property": "Avg Filling Rate % PY"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Avg(Report - Period Comparison.Avg Filling Rate % PY)",
+              "active": true,
+              "displayName": "2024"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ],
+      "legend": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "position": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Right'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "dataPoint": [
+        {
+          "properties": {}
+        }
+      ],
+      "categoryAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "valueAxis": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "start": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            },
+            "end": {
+              "expr": {
+                "Literal": {
+                  "Value": "100D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,220 @@
+table 'Dim Date'
+	lineageTag: 494c733c-06be-41b1-a9af-00bae20f47d8
+
+	/// Mark this table as a Date Table for time intelligence
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: cd30af8e-18a9-4f47-a431-01db96a0d369
+		summarizeBy: none
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: 715de5a8-96e7-4adb-be68-06aa55bae5c9
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1106641b-8c06-42d7-a504-166f8519d758
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 91d40e1c-9953-4afa-b629-6dc9a2d7c0b9
+		summarizeBy: sum
+		sourceColumn: quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: 2b18a8ab-b6f8-4371-aaf3-60e9168436cc
+		summarizeBy: sum
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: c8395cc2-9abd-448f-8510-f8e3b465dbe0
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column week
+		dataType: int64
+		formatString: 0
+		lineageTag: 172f1a43-6cb6-41f5-8620-44609cf6c4e3
+		summarizeBy: sum
+		sourceColumn: week
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_month
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b92f104-5d83-4134-9a59-d82897a00908
+		summarizeBy: sum
+		sourceColumn: day_of_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_of_week
+		dataType: int64
+		formatString: 0
+		lineageTag: f1d14c01-6213-4ea6-b89f-0ea65b94f667
+		summarizeBy: sum
+		sourceColumn: day_of_week
+
+		annotation SummarizationSetBy = Automatic
+
+	column day_name
+		dataType: string
+		lineageTag: 791502e6-efda-4d14-b930-812dbe17a37e
+		summarizeBy: none
+		sourceColumn: day_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_weekend
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 14b1c239-c1d9-44a4-8ee8-4a4f519081ef
+		summarizeBy: none
+		sourceColumn: is_weekend
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_holiday
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1352e582-569e-48cf-8b85-2718a2b8fe01
+		summarizeBy: none
+		sourceColumn: is_holiday
+
+		annotation SummarizationSetBy = Automatic
+
+	column season
+		dataType: string
+		lineageTag: 455bcec7-e582-4184-8153-166db56d037e
+		summarizeBy: none
+		sourceColumn: season
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month
+		dataType: int64
+		formatString: 0
+		lineageTag: fe59098c-d8b4-43f2-b44e-8aa949cd4d5e
+		summarizeBy: sum
+		sourceColumn: year_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column prev_year_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 34e68e10-b222-44c3-b026-0018e8889f10
+		summarizeBy: none
+		sourceColumn: prev_year_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column prev_month_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 43acc479-cd88-432f-ac90-9f25300c3a6c
+		summarizeBy: none
+		sourceColumn: prev_month_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column prev_week_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 9ff607f4-50b9-468e-8a2e-e5d49ad5e37e
+		summarizeBy: none
+		sourceColumn: prev_week_date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column year_quarter_sort
+		dataType: string
+		lineageTag: f6a7b8c9-d0e1-2345-f123-456789012345
+		summarizeBy: none
+		sourceColumn: year_quarter_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_month_sort
+		dataType: string
+		lineageTag: a7b8c9d0-e1f2-3456-1234-567890123456
+		summarizeBy: none
+		sourceColumn: year_month_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column year_week_sort
+		dataType: string
+		lineageTag: b8c9d0e1-f2a3-4567-2345-678901234567
+		summarizeBy: none
+		sourceColumn: year_week_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	/// Date Hierarchy for time-based drill-down with proper year filtering
+	hierarchy 'Date Hierarchy'
+		lineageTag: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+		level Year
+			lineageTag: b2c3d4e5-f6a7-8901-bcde-f12345678901
+			column: year
+
+		level Quarter
+			lineageTag: c3d4e5f6-a7b8-9012-cdef-123456789012
+			column: quarter
+
+		level Month
+			lineageTag: d4e5f6a7-b8c9-0123-def1-234567890123
+			column: month_name
+
+		level Date
+			lineageTag: e5f6a7b8-c9d0-1234-ef12-345678901234
+			column: date
+
+	partition 'Dim Date' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    dw_dim_date = DyrWatt_Analytics{[Schema="dw",Item="dim_date"]}[Data],
+				    AddYearQuarter = Table.AddColumn(dw_dim_date, "year_quarter_sort", each if [year] <> null and [quarter] <> null then Text.From([year]) & "-Q" & Text.From([quarter]) else null, type text),
+				    AddYearMonth = Table.AddColumn(AddYearQuarter, "year_month_sort", each if [year] <> null and [month] <> null and [month_name] <> null then Text.From([year]) & "-" & Text.PadStart(Text.From([month]), 2, "0") & " " & [month_name] else null, type text),
+				    AddYearWeek = Table.AddColumn(AddYearMonth, "year_week_sort", each if [year] <> null and [week] <> null then Text.From([year]) & "-W" & Text.PadStart(Text.From([week]), 2, "0") else null, type text)
+				in
+				    AddYearWeek
+

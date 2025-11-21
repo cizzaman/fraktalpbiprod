@@ -1,0 +1,364 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 49.934392793113645,
+        "y": 369.514506669041
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 2685.6144257876258,
+            "y": 976.61001351287359
+          },
+          "nodeIndex": "KPI Measures",
+          "nodeLineageTag": "measures-table-centralized",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 1613.5137421598233,
+            "y": 1060.0866184838255
+          },
+          "nodeIndex": "Dim Area",
+          "nodeLineageTag": "a95d9f28-5787-4f88-ae62-853698c7a57b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 603.67017474947045,
+            "y": 2081.2393489067572
+          },
+          "nodeIndex": "Dim Date",
+          "nodeLineageTag": "494c733c-06be-41b1-a9af-00bae20f47d8",
+          "size": {
+            "height": 497.03746919145226,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 3043.8748695974305,
+            "y": 1558.2410185107337
+          },
+          "nodeIndex": "Dim Month",
+          "nodeLineageTag": "8a9f2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 94.458161656365746,
+            "y": 854.50028774052487
+          },
+          "nodeIndex": "Dim Weather Station",
+          "nodeLineageTag": "43d33fb5-979b-4a8a-bc4a-5f5cbb91e1e5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 643.43961316079958,
+            "y": 1035.4172451382717
+          },
+          "nodeIndex": "Fact Reservoir",
+          "nodeLineageTag": "9fd5f720-5277-41f8-b35e-344d200a22be",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 2268.0551515411075,
+            "y": 950.0018228889893
+          },
+          "nodeIndex": "Fact Weather",
+          "nodeLineageTag": "cb8d6bb8-ae0f-47f4-a59e-ed91543d1491",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 67.181893699922767,
+            "y": 1325.38977358897
+          },
+          "nodeIndex": "Report - Extremes",
+          "nodeLineageTag": "c7b3a162-7306-4145-b26c-039fc5e682e6",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 71.685507783501549,
+            "y": 1953.2200270257472
+          },
+          "nodeIndex": "Report - Largest Changes",
+          "nodeLineageTag": "239464ec-bded-4e47-a901-ec7e070e7170",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1784.5769462530207,
+            "y": 1953.2200270257472
+          },
+          "nodeIndex": "Report - Period Comparison",
+          "nodeLineageTag": "cf0c4d15-d002-4223-bc12-0bc9b5da6f97",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 405.82507717992911,
+            "y": 369.50041534957535
+          },
+          "nodeIndex": "Report - Weather Daily",
+          "nodeLineageTag": "5cb12108-088d-4fdc-9cc2-4b4d64585265",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 11
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 40.052554724883251,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 1,
+      "scrollPosition": {
+        "x": 0,
+        "y": 283.78841973068427
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 0,
+            "y": 1087.3133428237461
+          },
+          "nodeIndex": "Dim Area",
+          "nodeLineageTag": "a95d9f28-5787-4f88-ae62-853698c7a57b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 1156.4540994462996,
+            "y": 125.82048750529111
+          },
+          "nodeIndex": "Dim Date",
+          "nodeLineageTag": "494c733c-06be-41b1-a9af-00bae20f47d8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 119.18710184786576,
+            "y": 162.67056279449611
+          },
+          "nodeIndex": "Dim Month",
+          "nodeLineageTag": "8a9f2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 590.260307080875,
+            "y": 0
+          },
+          "nodeIndex": "Dim Weather Station",
+          "nodeLineageTag": "43d33fb5-979b-4a8a-bc4a-5f5cbb91e1e5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 677.26430393796124,
+            "y": 1198.7441410170543
+          },
+          "nodeIndex": "Fact Reservoir",
+          "nodeLineageTag": "9fd5f720-5277-41f8-b35e-344d200a22be",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 603.78194995627166,
+            "y": 420.49532597510358
+          },
+          "nodeIndex": "Fact Weather",
+          "nodeLineageTag": "cb8d6bb8-ae0f-47f4-a59e-ed91543d1491",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        }
+      ],
+      "name": "facts&dims",
+      "zoomValue": 65.89416163544071,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 2,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1724.4889795322563,
+            "y": 624.10522965557323
+          },
+          "nodeIndex": "Dim Area",
+          "nodeLineageTag": "a95d9f28-5787-4f88-ae62-853698c7a57b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 394.50499429967653,
+            "y": 334.68022554550112
+          },
+          "nodeIndex": "Dim Date",
+          "nodeLineageTag": "494c733c-06be-41b1-a9af-00bae20f47d8",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 1498.1058935490737,
+            "y": 98.118538093599568
+          },
+          "nodeIndex": "Dim Month",
+          "nodeLineageTag": "8a9f2c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1014.1749457380465,
+            "y": 67.46535053534177
+          },
+          "nodeIndex": "Report - Extremes",
+          "nodeLineageTag": "c7b3a162-7306-4145-b26c-039fc5e682e6",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 1008.2349958357474,
+            "y": 657.67278899954135
+          },
+          "nodeIndex": "Report - Largest Changes",
+          "nodeLineageTag": "239464ec-bded-4e47-a901-ec7e070e7170",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1050.3509942032827,
+            "y": 1077.7476203992294
+          },
+          "nodeIndex": "Report - Period Comparison",
+          "nodeLineageTag": "cf0c4d15-d002-4223-bc12-0bc9b5da6f97",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 486.44717761292145,
+            "y": 1074.5231299394895
+          },
+          "nodeIndex": "Report - Weather Daily",
+          "nodeLineageTag": "5cb12108-088d-4fdc-9cc2-4b4d64585265",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 12
+        }
+      ],
+      "name": "new model",
+      "zoomValue": 52.420902358058285,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

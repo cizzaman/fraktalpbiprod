@@ -1,0 +1,231 @@
+table 'Fact Reservoir'
+	lineageTag: 9fd5f720-5277-41f8-b35e-344d200a22be
+
+	column fact_magasin_id
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: b644089a-65b5-4724-a638-6e722424dec9
+		summarizeBy: sum
+		sourceColumn: fact_magasin_id
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 7342c38e-aed4-4ea5-8209-40522b02d2ca
+		summarizeBy: none
+		sourceColumn: date_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column omraade_key
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: acfc7b97-1940-4c7a-a102-5ca166e35dba
+		summarizeBy: none
+		sourceColumn: omraade_key
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column magasininnhold_GWh
+		dataType: double
+		isHidden
+		lineageTag: a76e7852-a3ba-4632-a73f-28aca6823054
+		summarizeBy: sum
+		sourceColumn: magasininnhold_GWh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column tilsig_GWh
+		dataType: double
+		isHidden
+		lineageTag: 48620bf8-2d1b-4256-83bf-25fbda74c7c9
+		summarizeBy: sum
+		sourceColumn: tilsig_GWh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column tapping_GWh
+		dataType: double
+		isHidden
+		lineageTag: 313eb774-608d-4ffc-adc5-3bed1b459507
+		summarizeBy: sum
+		sourceColumn: tapping_GWh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column fyllingsgrad_prosent
+		dataType: double
+		isHidden
+		lineageTag: f38b1e32-2bf6-4e50-87e1-c2829a940665
+		summarizeBy: sum
+		sourceColumn: fyllingsgrad_prosent
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column magasinkapasitet_GWh
+		dataType: double
+		isHidden
+		lineageTag: 4718f5e2-4615-424e-aa97-82f02ee4f893
+		summarizeBy: sum
+		sourceColumn: magasinkapasitet_GWh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column netto_endring_GWh
+		dataType: double
+		isHidden
+		lineageTag: 792c596b-e5ed-4d2f-a7eb-afca14ad9574
+		summarizeBy: sum
+		sourceColumn: netto_endring_GWh
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column utnyttelsesgrad
+		dataType: double
+		isHidden
+		lineageTag: e8a1d55c-919b-433b-b756-6132c333e057
+		summarizeBy: sum
+		sourceColumn: utnyttelsesgrad
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column loaded_datetime
+		dataType: dateTime
+		isHidden
+		formatString: General Date
+		lineageTag: 86564b61-e46d-4b2f-88e2-d516dac20f59
+		summarizeBy: none
+		sourceColumn: loaded_datetime
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	/// =======================================================
+	/// CALCULATED COLUMNS
+	/// =======================================================
+	/// Status Farge (Status Color)
+	/// Color based on fyllingsgrad status for conditional formatting
+	column 'Status Farge' =
+			VAR _Filling = 'Fact Reservoir'[fyllingsgrad_prosent]
+			RETURN
+				SWITCH(
+					TRUE(),
+					_Filling < 30, "#D64554",  // Red - Kritisk
+					_Filling < 50, "#E66C37",  // Orange - Lav
+					_Filling < 80, "#1AAB40",  // Green - Normal
+					"#118DFF"                   // Blue - Høy
+				)
+			dataType: string
+			lineageTag: cc_statusfarge
+			summarizeBy: none
+		isHidden
+		lineageTag: 744732d6-a9ee-409f-a248-84db6eb09cdd
+
+		changedProperty = IsHidden
+
+	/// Trend Icon
+	/// Visual indicator for trends based on changes
+	column 'Trend Icon' =
+			VAR _Current = 'Fact Reservoir'[magasininnhold_GWh]
+			VAR _Previous =
+				CALCULATE(
+					SUM('Fact Reservoir'[magasininnhold_GWh]),
+					DATEADD('Dim Date'[date], -7, DAY)
+				)
+			VAR _Change = _Current - _Previous
+			RETURN
+				SWITCH(
+					TRUE(),
+					_Change > 2, "↑",    // Increasing
+					_Change < -2, "↓",   // Decreasing
+					"→"                  // Stable
+				)
+			dataType: string
+			lineageTag: cc_trendicon
+			summarizeBy: none
+		isHidden
+		lineageTag: 94164563-9685-4b30-a137-2f8ce6399b1f
+
+		changedProperty = IsHidden
+
+	/// Week Number
+	/// Calculated week number for time analysis
+	column 'Week Number' =
+			VAR _DateKey = 'Fact Reservoir'[date_key]
+			VAR _Date = RELATED('Dim Date'[date])
+			RETURN IF(ISBLANK(_Date), BLANK(), WEEKNUM(_Date))
+			dataType: int64
+			formatString: 0
+			lineageTag: cc_weeknumber
+			summarizeBy: none
+		isHidden
+		lineageTag: 7be77b4b-8d13-4823-96a1-960f9088c554
+
+		changedProperty = IsHidden
+
+	/// Month-Year
+	/// Text column for month-year grouping
+	column Month-Year =
+			VAR _DateKey = 'Fact Reservoir'[date_key]
+			VAR _Date = RELATED('Dim Date'[date])
+			RETURN IF(ISBLANK(_Date), BLANK(), FORMAT(_Date, "MMM YYYY"))
+			dataType: string
+			lineageTag: cc_monthyear
+			summarizeBy: none
+		isHidden
+		lineageTag: 1ab18095-b782-4bd6-b5d8-dcd7edc35036
+
+		changedProperty = IsHidden
+
+	partition 'Fact Reservoir' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    dw_fact_magasin = DyrWatt_Analytics{[Schema="dw",Item="fact_magasin"]}[Data]
+				in
+				    dw_fact_magasin
+
+	changedProperty = IsHidden
+

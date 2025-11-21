@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "1395e9017c0a390ee94c",
+  "position": {
+    "x": 319.75628332063974,
+    "y": 453.31302361005328,
+    "z": 3000,
+    "height": 200.8225437928408,
+    "width": 599.54303122619945,
+    "tabOrder": 6000
+  },
+  "visual": {
+    "visualType": "clusteredColumnChart",
+    "query": {
+      "queryState": {
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Dim Area"
+                    }
+                  },
+                  "Property": "omraade_navn"
+                }
+              },
+              "queryRef": "Dim Area.omraade_navn",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "KPI Measures"
+                    }
+                  },
+                  "Property": "nedbor_mm"
+                }
+              },
+              "queryRef": "KPI Measures.nedbor_mm",
+              "active": true
+            }
+          ]
+        }
+      }
+    }
+  }
+}

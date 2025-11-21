@@ -1,0 +1,147 @@
+table 'Report - Period Comparison'
+	lineageTag: cf0c4d15-d002-4223-bc12-0bc9b5da6f97
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: be44bd7d-5f35-412b-8009-a4e9bde82959
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 342ff22b-d8b8-49a0-818e-18885bbdbc9e
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Code'
+		dataType: string
+		lineageTag: 5aaad6ec-9a38-46eb-822b-0d032f3de9c0
+		summarizeBy: none
+		sourceColumn: Area Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Area Name'
+		dataType: string
+		lineageTag: d2d96d46-be70-4f87-b1ea-9af645301729
+		summarizeBy: none
+		sourceColumn: Area Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Avg Filling Rate %'
+		dataType: double
+		lineageTag: 74a5984a-ba42-453e-839f-9e5e2ca1d006
+		summarizeBy: sum
+		sourceColumn: Avg Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Content GWh'
+		dataType: double
+		lineageTag: 21888a87-a851-4bde-abf1-9d453d1077ba
+		summarizeBy: sum
+		sourceColumn: Avg Content GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Total Inflow GWh'
+		dataType: double
+		lineageTag: f56ef7be-d0b9-4279-8c40-0c7a6d4d18b8
+		summarizeBy: sum
+		sourceColumn: Total Inflow GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Total Outflow GWh'
+		dataType: double
+		lineageTag: e4cd6c55-b5ed-483d-b27e-b6eba86db8ce
+		summarizeBy: sum
+		sourceColumn: Total Outflow GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Filling Rate % PY'
+		dataType: double
+		lineageTag: 38026fd5-0055-4bbf-b35a-3a977879bfe7
+		summarizeBy: sum
+		sourceColumn: Avg Filling Rate % PY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Avg Content GWh PY'
+		dataType: double
+		lineageTag: 211561af-abd7-49b5-be15-6a70d3085906
+		summarizeBy: sum
+		sourceColumn: Avg Content GWh PY
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Change Filling Rate %'
+		dataType: double
+		lineageTag: dba69516-8083-4272-84d2-90a2f5f432be
+		summarizeBy: sum
+		sourceColumn: Change Filling Rate %
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Change Content GWh'
+		dataType: double
+		lineageTag: 6b098331-ba0d-4aa3-b57f-abccdf09ff40
+		summarizeBy: sum
+		sourceColumn: Change Content GWh
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '% Change Filling Rate'
+		dataType: double
+		lineageTag: 8a550d4d-293f-4281-83b1-0b04ba4baf72
+		summarizeBy: sum
+		sourceColumn: % Change Filling Rate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '% Change Inflow'
+		dataType: double
+		lineageTag: b8fbff94-acc8-4e83-b10f-9354634e6e41
+		summarizeBy: sum
+		sourceColumn: % Change Inflow
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'report vw_period_comparison' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    report_vw_period_comparison = DyrWatt_Analytics{[Schema="report",Item="vw_period_comparison"]}[Data]
+				in
+				    report_vw_period_comparison
+

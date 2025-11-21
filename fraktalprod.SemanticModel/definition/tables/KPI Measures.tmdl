@@ -1,0 +1,784 @@
+table 'KPI Measures'
+	lineageTag: measures-table-centralized
+
+	/// ================================================================
+	/// CENTRALIZED MEASURES TABLE
+	/// ================================================================
+	/// This table contains ALL DAX measures for the DyrWatt Analytics model.
+	/// It has no data columns - only measures.
+	/// 
+	/// Benefits:
+	/// - Clean, organized measure library in one location
+	/// - Easy to find and manage all calculations
+	/// - Declutters fact tables in report view
+	/// - Best practice for Power BI semantic models
+	/// - Measures appear first in Fields pane (due to _ prefix)
+	/// 
+	/// Organization:
+	/// - Magasin Basis Measures (Total, Average, Min/Max)
+	/// - Time Intelligence Measures (YoY, MoM, YTD, Moving Averages)
+	/// - KPI & Alert Measures (Status, Alerts, Risk Scores)
+	/// - Ekstremverdier & Største Endringer (Extremes, Volatility)
+	/// - Vær & Nedbør Measures (Precipitation, Weather)
+	/// - Nedbør Ekstremverdier (Weather Extremes)
+	/// ================================================================
+	/// =======================================================
+	/// MAGASIN BASIS MEASURES
+	/// =======================================================
+	/// Total Magasininnhold (GWh)
+	/// Summerer alt magasininnhold for valgt periode/område
+	measure 'Total Magasininnhold (GWh)' =
+			VAR _Sum = SUM('Fact Reservoir'[magasininnhold_GWh])
+			RETURN IF(ISBLANK(_Sum), BLANK(), _Sum)
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_totalmag
+
+	/// Gjennomsnittlig Fyllingsgrad (%)
+	/// Beregner gjennomsnittlig fyllingsgrad over valgt periode
+	measure 'Gjennomsnittlig Fyllingsgrad (%)' =
+			VAR _Avg = AVERAGE('Fact Reservoir'[fyllingsgrad_prosent])
+			RETURN IF(ISBLANK(_Avg), BLANK(), _Avg)
+		formatString: 0.0 "%"
+		lineageTag: m_avgfyll
+
+	/// Total Tilsig (GWh)
+	/// Summerer alt tilsig (vanninngang) for valgt periode
+	measure 'Total Tilsig (GWh)' =
+			VAR _Tilsig = SUM('Fact Reservoir'[tilsig_GWh])
+			RETURN IF(ISBLANK(_Tilsig), BLANK(), _Tilsig)
+		formatString: #,##0 "GWh"
+		lineageTag: m_totaltilsig
+
+	/// Total Tapping (GWh)
+	/// Summerer all tapping (vannuttaking/produksjon)
+	measure 'Total Tapping (GWh)' =
+			VAR _Tapping = SUM('Fact Reservoir'[tapping_GWh])
+			RETURN IF(ISBLANK(_Tapping), BLANK(), _Tapping)
+		formatString: #,##0 "GWh"
+		lineageTag: m_totaltapping
+
+	/// Netto Endring (GWh)
+	/// Beregner netto endring: Tilsig minus Tapping
+	/// Positiv = magasinet fylles, Negativ = magasinet tømmes
+	measure 'Netto Endring (GWh)' =
+			VAR _Tilsig = [Total Tilsig (GWh)]
+			VAR _Tapping = [Total Tapping (GWh)]
+			VAR _NettoEndring = _Tilsig - _Tapping
+			RETURN IF(ISBLANK(_Tilsig) || ISBLANK(_Tapping), BLANK(), _NettoEndring)
+		formatString: +#,##0;-#,##0;0 "GWh"
+		lineageTag: m_nettoendring
+
+	/// Kapasitetsutnyttelse (%)
+	/// Beregner hvor mye av totalkapasiteten som er i bruk
+	measure 'Kapasitetsutnyttelse (%)' =
+			VAR _Innhold = SUM('Fact Reservoir'[magasininnhold_GWh])
+			VAR _Kapasitet = SUM('Fact Reservoir'[magasinkapasitet_GWh])
+			VAR _Utnyttelse = DIVIDE(_Innhold, _Kapasitet, 0) * 100
+			RETURN IF(ISBLANK(_Innhold) || ISBLANK(_Kapasitet), BLANK(), _Utnyttelse)
+		formatString: 0.0 "%"
+		lineageTag: m_kapasitetsutn
+
+	/// Maks Fyllingsgrad (%)
+	/// Høyeste fyllingsgrad i valgt periode
+	measure 'Maks Fyllingsgrad (%)' =
+			VAR _Max = MAX('Fact Reservoir'[fyllingsgrad_prosent])
+			RETURN IF(ISBLANK(_Max), BLANK(), _Max)
+		formatString: 0.0 "%"
+		lineageTag: m_maxfyll
+
+	/// Min Fyllingsgrad (%)
+	/// Laveste fyllingsgrad i valgt periode
+	measure 'Min Fyllingsgrad (%)' =
+			VAR _Min = MIN('Fact Reservoir'[fyllingsgrad_prosent])
+			RETURN IF(ISBLANK(_Min), BLANK(), _Min)
+		formatString: 0.0 "%"
+		lineageTag: m_minfyll
+
+	/// Total Kapasitet (GWh)
+	/// Summerer total magasinkapasitet for valgte områder
+	measure 'Total Kapasitet (GWh)' =
+			VAR _Kapasitet = SUM('Fact Reservoir'[magasinkapasitet_GWh])
+			RETURN IF(ISBLANK(_Kapasitet), BLANK(), _Kapasitet)
+		formatString: #,##0 "GWh"
+		lineageTag: m_totalkapasitet
+
+	/// Antall Målinger
+	/// Teller antall datapunkter i valgt periode (datakvalitet-sjekk)
+	measure 'Antall Målinger' =
+			VAR _Count = COUNTROWS('Fact Reservoir')
+			RETURN IF(_Count = 0, BLANK(), _Count)
+		formatString: #,##0
+		lineageTag: m_antallmalinger
+
+	/// =======================================================
+	/// TIME INTELLIGENCE MEASURES
+	/// =======================================================
+	/// Magasininnhold Forrige År (GWh)
+	/// Henter magasininnhold for samme periode i fjor
+	measure 'Magasininnhold Forrige År (GWh)' =
+			CALCULATE(
+				[Total Magasininnhold (GWh)],
+				SAMEPERIODLASTYEAR('Dim Date'[date])
+			)
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_magforrigeaar
+
+	/// Fyllingsgrad Forrige År (%)
+	/// Fyllingsgrad for samme periode i fjor
+	measure 'Fyllingsgrad Forrige År (%)' =
+			CALCULATE(
+				[Gjennomsnittlig Fyllingsgrad (%)],
+				SAMEPERIODLASTYEAR('Dim Date'[date])
+			)
+		formatString: 0.0 "%"
+		lineageTag: m_fyllforrigeaar
+
+	/// YoY Endring - Magasin (GWh)
+	/// Absoluttverdier endring fra i fjor (Year-over-Year)
+	measure 'YoY Endring - Magasin (GWh)' =
+			VAR _CurrentYear = [Total Magasininnhold (GWh)]
+			VAR _LastYear = [Magasininnhold Forrige År (GWh)]
+			VAR _Change = _CurrentYear - _LastYear
+			RETURN IF(ISBLANK(_CurrentYear) || ISBLANK(_LastYear), BLANK(), _Change)
+		formatString: +#,##0;-#,##0;0 "GWh"
+		lineageTag: m_yoymagendring
+
+	/// YoY Endring - Fyllingsgrad (%)
+	/// Prosentpoeng-endring i fyllingsgrad fra i fjor
+	measure 'YoY Endring - Fyllingsgrad (%)' =
+			VAR _CurrentYear = [Gjennomsnittlig Fyllingsgrad (%)]
+			VAR _LastYear = [Fyllingsgrad Forrige År (%)]
+			VAR _Change = _CurrentYear - _LastYear
+			RETURN IF(ISBLANK(_CurrentYear) || ISBLANK(_LastYear), BLANK(), _Change)
+		formatString: +0.0;-0.0;0.0 "pp"
+		lineageTag: m_yoyfyllendring
+
+	/// YoY Prosentvis Endring (%)
+	/// Prosentvis vekst fra i fjor til i år
+	measure 'YoY Prosentvis Endring (%)' =
+			VAR _CurrentYear = [Total Magasininnhold (GWh)]
+			VAR _LastYear = [Magasininnhold Forrige År (GWh)]
+			VAR _PercentChange = DIVIDE(_CurrentYear - _LastYear, _LastYear, 0) * 100
+			RETURN IF(ISBLANK(_CurrentYear) || ISBLANK(_LastYear) || _LastYear = 0, BLANK(), _PercentChange)
+		formatString: +0.0%;-0.0%;0%
+		lineageTag: m_yoyprosent
+
+	/// Magasininnhold Forrige Måned (GWh)
+	/// Magasininnhold for forrige måned
+	measure 'Magasininnhold Forrige Måned (GWh)' =
+			CALCULATE(
+				[Total Magasininnhold (GWh)],
+				DATEADD('Dim Date'[date], -1, MONTH)
+			)
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_magforrigemaaned
+
+	/// MoM Endring - Magasin (GWh)
+	/// Måned-over-måned endring i magasininnhold
+	measure 'MoM Endring - Magasin (GWh)' =
+			VAR _CurrentMonth = [Total Magasininnhold (GWh)]
+			VAR _LastMonth = [Magasininnhold Forrige Måned (GWh)]
+			VAR _Change = _CurrentMonth - _LastMonth
+			RETURN IF(ISBLANK(_CurrentMonth) || ISBLANK(_LastMonth), BLANK(), _Change)
+		formatString: +#,##0;-#,##0;0 "GWh"
+		lineageTag: m_mommagendring
+
+	/// Running Total - Tilsig YTD (GWh)
+	/// Akkumulert tilsig hittil i år (Year-To-Date)
+	measure 'Running Total - Tilsig YTD (GWh)' =
+			CALCULATE(
+				[Total Tilsig (GWh)],
+				DATESYTD('Dim Date'[date])
+			)
+		formatString: #,##0 "GWh"
+		lineageTag: m_ytdtilsig
+
+	/// Running Total - Tapping YTD (GWh)
+	/// Akkumulert tapping hittil i år
+	measure 'Running Total - Tapping YTD (GWh)' =
+			CALCULATE(
+				[Total Tapping (GWh)],
+				DATESYTD('Dim Date'[date])
+			)
+		formatString: #,##0 "GWh"
+		lineageTag: m_ytdtapping
+
+	/// Netto Endring YTD (GWh)
+	/// Akkumulert netto endring hittil i år
+	measure 'Netto Endring YTD (GWh)' =
+			VAR _TilsigYTD = [Running Total - Tilsig YTD (GWh)]
+			VAR _TappingYTD = [Running Total - Tapping YTD (GWh)]
+			VAR _NettoYTD = _TilsigYTD - _TappingYTD
+			RETURN IF(ISBLANK(_TilsigYTD) || ISBLANK(_TappingYTD), BLANK(), _NettoYTD)
+		formatString: +#,##0;-#,##0;0 "GWh"
+		lineageTag: m_ytdnetto
+
+	/// MA7 Fyllingsgrad (%)
+	/// 7-dagers glidende gjennomsnitt for fyllingsgrad
+	measure 'MA7 Fyllingsgrad (%)' =
+			VAR _CurrentDate = MAX('Dim Date'[date])
+			VAR _7DaysAgo = _CurrentDate - 7
+			VAR _Avg7Days =
+				CALCULATE(
+					[Gjennomsnittlig Fyllingsgrad (%)],
+					DATESBETWEEN('Dim Date'[date], _7DaysAgo, _CurrentDate)
+				)
+			RETURN IF(ISBLANK(_Avg7Days), BLANK(), _Avg7Days)
+		formatString: 0.0 "%"
+		lineageTag: m_ma7fyll
+
+	/// MA30 Fyllingsgrad (%)
+	/// 30-dagers glidende gjennomsnitt for fyllingsgrad
+	measure 'MA30 Fyllingsgrad (%)' =
+			VAR _CurrentDate = MAX('Dim Date'[date])
+			VAR _30DaysAgo = _CurrentDate - 30
+			VAR _Avg30Days =
+				CALCULATE(
+					[Gjennomsnittlig Fyllingsgrad (%)],
+					DATESBETWEEN('Dim Date'[date], _30DaysAgo, _CurrentDate)
+				)
+			RETURN IF(ISBLANK(_Avg30Days), BLANK(), _Avg30Days)
+		formatString: 0.0 "%"
+		lineageTag: m_ma30fyll
+
+	/// =======================================================
+	/// KPI & ALERT MEASURES
+	/// =======================================================
+	/// Fyllingsgrad Status
+	/// Kategoriserer fyllingsgrad: Kritisk < 30% | Lav 30-50% | Normal 50-80% | Høy > 80%
+	measure 'Fyllingsgrad Status' =
+			VAR _Filling = [Gjennomsnittlig Fyllingsgrad (%)]
+			VAR _Status =
+				SWITCH(
+					TRUE(),
+					_Filling < 30, "Kritisk",
+					_Filling < 50, "Lav",
+					_Filling < 80, "Normal",
+					"Høy"
+				)
+			RETURN IF(ISBLANK(_Filling), BLANK(), _Status)
+		lineageTag: m_fyllstatus
+
+	/// Kritisk Alert Count
+	/// Teller antall områder med kritisk fyllingsgrad (< 30%)
+	measure 'Kritisk Alert Count' =
+			VAR _CriticalAreas =
+				CALCULATE(
+					DISTINCTCOUNT('Dim Area'[omraade_key]),
+					FILTER(
+						ALL('Dim Area'),
+						CALCULATE([Gjennomsnittlig Fyllingsgrad (%)]) < 30
+					)
+				)
+			RETURN IF(ISBLANK(_CriticalAreas) || _CriticalAreas = 0, 0, _CriticalAreas)
+		formatString: #,##0
+		lineageTag: m_kritiskcount
+
+	/// Område med Høyest Fyllingsgrad
+	/// Returnerer navnet på området med høyest fyllingsgrad
+	measure 'Område med Høyest Fyllingsgrad' =
+			VAR _TopArea =
+				TOPN(
+					1,
+					SUMMARIZE(
+						'Dim Area',
+						'Dim Area'[omraade_kode],
+						"AvgFilling", [Gjennomsnittlig Fyllingsgrad (%)]
+					),
+					[AvgFilling],
+					DESC
+				)
+			VAR _AreaName = MAXX(_TopArea, 'Dim Area'[omraade_kode])
+			RETURN IF(ISBLANK(_AreaName), "Ingen data", _AreaName)
+		lineageTag: m_omraadetop
+
+	/// Område med Lavest Fyllingsgrad
+	/// Returnerer navnet på området med lavest fyllingsgrad
+	measure 'Område med Lavest Fyllingsgrad' =
+			VAR _BottomArea =
+				TOPN(
+					1,
+					SUMMARIZE(
+						'Dim Area',
+						'Dim Area'[omraade_kode],
+						"AvgFilling", [Gjennomsnittlig Fyllingsgrad (%)]
+					),
+					[AvgFilling],
+					ASC
+				)
+			VAR _AreaName = MAXX(_BottomArea, 'Dim Area'[omraade_kode])
+			RETURN IF(ISBLANK(_AreaName), "Ingen data", _AreaName)
+		lineageTag: m_omraadebottom
+
+	/// Avvik fra Gjennomsnitt (%)
+	/// Beregner avvik fra nasjonal gjennomsnittlig fyllingsgrad
+	measure 'Avvik fra Gjennomsnitt (%)' =
+			VAR _CurrentFilling = [Gjennomsnittlig Fyllingsgrad (%)]
+			VAR _NationalAvg =
+				CALCULATE(
+					[Gjennomsnittlig Fyllingsgrad (%)],
+					ALL('Dim Area')
+				)
+			VAR _Deviation = _CurrentFilling - _NationalAvg
+			RETURN IF(ISBLANK(_CurrentFilling) || ISBLANK(_NationalAvg), BLANK(), _Deviation)
+		formatString: +0.0;-0.0;0.0 "pp"
+		lineageTag: m_avviksnitt
+
+	/// Kapasitet Ubrukt (GWh)
+	/// Beregner ledig kapasitet (Kapasitet - Innhold)
+	measure 'Kapasitet Ubrukt (GWh)' =
+			VAR _Capacity = [Total Kapasitet (GWh)]
+			VAR _Content = [Total Magasininnhold (GWh)]
+			VAR _Unused = _Capacity - _Content
+			RETURN IF(ISBLANK(_Capacity) || ISBLANK(_Content), BLANK(), _Unused)
+		formatString: #,##0 "GWh"
+		lineageTag: m_kapubrukt
+
+	/// Vannbalanse Ratio
+	/// Forholdet mellom tilsig og tapping (> 1.0 = fylles, < 1.0 = tømmes)
+	measure 'Vannbalanse Ratio' =
+			VAR _Tilsig = [Total Tilsig (GWh)]
+			VAR _Tapping = [Total Tapping (GWh)]
+			VAR _Ratio = DIVIDE(_Tilsig, _Tapping, 0)
+			RETURN IF(ISBLANK(_Tilsig) || ISBLANK(_Tapping) || _Tapping = 0, BLANK(), _Ratio)
+		formatString: 0.00
+		lineageTag: m_vannbalratio
+
+	/// Trend Indikator
+	/// Viser trend-retning basert på 7-dagers endring
+	measure 'Trend Indikator' =
+			VAR _Current = [Gjennomsnittlig Fyllingsgrad (%)]
+			VAR _7DaysAgo =
+				CALCULATE(
+					[Gjennomsnittlig Fyllingsgrad (%)],
+					DATEADD('Dim Date'[date], -7, DAY)
+				)
+			VAR _Change = _Current - _7DaysAgo
+			VAR _Trend =
+				SWITCH(
+					TRUE(),
+					_Change > 2, "↑ Økende",
+					_Change < -2, "↓ Synkende",
+					"→ Stabil"
+				)
+			RETURN IF(ISBLANK(_Current) || ISBLANK(_7DaysAgo), BLANK(), _Trend)
+		lineageTag: m_trendind
+
+	/// Risiko Score
+	/// Kombinert risikovurdering (0-100): lav fylling + synkende trend = høy risiko
+	measure 'Risiko Score' =
+			VAR _Filling = [Gjennomsnittlig Fyllingsgrad (%)]
+			VAR _FillingScore = 100 - _Filling
+			VAR _TrendChange =
+				[Gjennomsnittlig Fyllingsgrad (%)] -
+				CALCULATE([Gjennomsnittlig Fyllingsgrad (%)], DATEADD('Dim Date'[date], -7, DAY))
+			VAR _TrendScore = IF(_TrendChange < 0, ABS(_TrendChange) * 5, 0)
+			VAR _TotalScore = MIN(100, _FillingScore + _TrendScore)
+			RETURN IF(ISBLANK(_Filling), BLANK(), _TotalScore)
+		formatString: 0
+		lineageTag: m_risikoscore
+
+	/// Fyllingsgrad Target (%)
+	/// Target value for gauge charts - 80% normal operating level
+	measure 'Fyllingsgrad Target (%)' = 80
+		formatString: 0 "%"
+		lineageTag: m_fylltarget
+
+	/// =======================================================
+	/// EKSTREMVERDIER & STØRSTE ENDRINGER
+	/// =======================================================
+	/// Største Daglig Endring - Fyllingsgrad (pp)
+	/// Finner den største endringen i fyllingsgrad fra en dag til neste
+	measure 'Største Daglig Endring - Fyllingsgrad (pp)' =
+			VAR _CurrentFillings =
+				ADDCOLUMNS(
+					SUMMARIZE('Fact Reservoir', 'Dim Date'[date], 'Dim Area'[omraade_kode]),
+					"CurrentFilling", [Gjennomsnittlig Fyllingsgrad (%)],
+					"PrevFilling", CALCULATE(
+						[Gjennomsnittlig Fyllingsgrad (%)],
+						DATEADD('Dim Date'[date], -1, DAY)
+					)
+				)
+			VAR _MaxChange =
+				MAXX(
+					_CurrentFillings,
+					ABS([CurrentFilling] - [PrevFilling])
+				)
+			RETURN IF(ISBLANK(_MaxChange), BLANK(), _MaxChange)
+		formatString: 0.0 "pp"
+		lineageTag: m_maxdagendring
+
+	/// Dato for Største Endring - Fyllingsgrad
+	/// Returnerer datoen med største endring i fyllingsgrad
+	measure 'Dato for Største Endring - Fyllingsgrad' =
+			VAR _CurrentFillings =
+				ADDCOLUMNS(
+					SUMMARIZE('Fact Reservoir', 'Dim Date'[date], 'Dim Area'[omraade_kode]),
+					"CurrentFilling", [Gjennomsnittlig Fyllingsgrad (%)],
+					"PrevFilling", CALCULATE(
+						[Gjennomsnittlig Fyllingsgrad (%)],
+						DATEADD('Dim Date'[date], -1, DAY)
+					),
+					"Change", ABS([Gjennomsnittlig Fyllingsgrad (%)] - CALCULATE(
+						[Gjennomsnittlig Fyllingsgrad (%)],
+						DATEADD('Dim Date'[date], -1, DAY)
+					))
+				)
+			VAR _MaxChange = MAXX(_CurrentFillings, [Change])
+			VAR _DateOfMax =
+				MAXX(
+					FILTER(_CurrentFillings, [Change] = _MaxChange),
+					'Dim Date'[date]
+				)
+			RETURN IF(ISBLANK(_DateOfMax), BLANK(), _DateOfMax)
+		formatString: Short Date
+		lineageTag: m_datostorsteendring
+
+	/// Område med Største Volatilitet
+	/// Identifiserer området med størst variasjon i fyllingsgrad
+	measure 'Område med Største Volatilitet' =
+			VAR _Volatility =
+				SUMMARIZE(
+					'Dim Area',
+					'Dim Area'[omraade_kode],
+					"StdDev", STDEV.P('Fact Reservoir'[fyllingsgrad_prosent])
+				)
+			VAR _MaxVolatility = MAXX(_Volatility, [StdDev])
+			VAR _AreaName =
+				MAXX(
+					FILTER(_Volatility, [StdDev] = _MaxVolatility),
+					'Dim Area'[omraade_kode]
+				)
+			RETURN IF(ISBLANK(_AreaName), "Ingen data", _AreaName)
+		lineageTag: m_maxvolatilitet
+
+	/// Volatilitets-Score (Standardavvik)
+	/// Måler variasjonen i fyllingsgrad - høyere score = mer ustabil
+	measure Volatilitets-Score =
+			VAR _StdDev = STDEV.P('Fact Reservoir'[fyllingsgrad_prosent])
+			RETURN IF(ISBLANK(_StdDev), BLANK(), _StdDev)
+		formatString: 0.0
+		lineageTag: m_volatilitetsscore
+
+	/// Største Ukeendring - Magasin (GWh)
+	/// Største endring i magasininnhold over en 7-dagers periode
+	measure 'Største Ukeendring - Magasin (GWh)' =
+			VAR _CurrentDate = MAX('Dim Date'[date])
+			VAR _CurrentWeek = [Total Magasininnhold (GWh)]
+			VAR _PreviousWeek =
+				CALCULATE(
+					[Total Magasininnhold (GWh)],
+					DATEADD('Dim Date'[date], -7, DAY)
+				)
+			VAR _Change = ABS(_CurrentWeek - _PreviousWeek)
+			RETURN IF(ISBLANK(_CurrentWeek) || ISBLANK(_PreviousWeek), BLANK(), _Change)
+		formatString: #,##0 "GWh"
+		lineageTag: m_maxukeendring
+
+	/// Antall Kritiske Perioder
+	/// Teller antall dager med fyllingsgrad under 30%
+	measure 'Antall Kritiske Perioder' =
+			VAR _CriticalDays =
+				CALCULATE(
+					DISTINCTCOUNT('Fact Reservoir'[date_key]),
+					'Fact Reservoir'[fyllingsgrad_prosent] < 30
+				)
+			RETURN IF(ISBLANK(_CriticalDays) || _CriticalDays = 0, 0, _CriticalDays)
+		formatString: #,##0 "dager"
+		lineageTag: m_kritiskeperioder
+
+	/// Gjennomsnittlig Daglig Endring (pp)
+	/// Gjennomsnittlig daglig endring i fyllingsgrad
+	measure 'Gjennomsnittlig Daglig Endring (pp)' =
+			VAR _AvgChange =
+				AVERAGEX(
+					SUMMARIZE('Fact Reservoir', 'Dim Date'[date]),
+					[Gjennomsnittlig Fyllingsgrad (%)] -
+					CALCULATE(
+						[Gjennomsnittlig Fyllingsgrad (%)],
+						DATEADD('Dim Date'[date], -1, DAY)
+					)
+				)
+			RETURN IF(ISBLANK(_AvgChange), BLANK(), _AvgChange)
+		formatString: +0.00;-0.00;0.00 "pp"
+		lineageTag: m_avgdagendring
+
+	/// =======================================================
+	/// VÆR & NEDBØR MEASURES
+	/// =======================================================
+	/// Total Nedbør (mm)
+	/// Summerer all nedbør for valgt periode
+	measure 'Total Nedbør (mm)' =
+			VAR _Precip = SUM('Fact Weather'[precipitation_daily_mm])
+			RETURN IF(ISBLANK(_Precip), BLANK(), _Precip)
+		formatString: #,##0.0 "mm"
+		lineageTag: m_totalnedboer
+
+	/// Gjennomsnittlig Daglig Nedbør (mm)
+	/// Gjennomsnittlig nedbør per dag
+	measure 'Gjennomsnittlig Daglig Nedbør (mm)' =
+			VAR _AvgPrecip = AVERAGE('Fact Weather'[precipitation_daily_mm])
+			RETURN IF(ISBLANK(_AvgPrecip), BLANK(), _AvgPrecip)
+		formatString: 0.0 "mm"
+		lineageTag: m_avgnedboer
+
+	/// Maks Døgnnedbør (mm)
+	/// Høyeste registrerte døgnnedbør i perioden
+	measure 'Maks Døgnnedbør (mm)' =
+			VAR _MaxPrecip = MAX('Fact Weather'[precipitation_daily_mm])
+			RETURN IF(ISBLANK(_MaxPrecip), BLANK(), _MaxPrecip)
+		formatString: 0.0 "mm"
+		lineageTag: m_maxnedboer
+
+	/// Antall Regnværsdager
+	/// Teller dager med nedbør > 1mm
+	measure 'Antall Regnværsdager' =
+			VAR _RainyDays =
+				CALCULATE(
+					DISTINCTCOUNT('Fact Weather'[date_key]),
+					'Fact Weather'[precipitation_daily_mm] > 1
+				)
+			RETURN IF(ISBLANK(_RainyDays) || _RainyDays = 0, 0, _RainyDays)
+		formatString: #,##0
+		lineageTag: m_regnvaersdager
+
+	/// Nedbør Siste 7 Dager (mm)
+	/// Summerer nedbør siste 7 dager
+	measure 'Nedbør Siste 7 Dager (mm)' =
+			VAR _CurrentDate = MAX('Dim Date'[date])
+			VAR _7DaysAgo = _CurrentDate - 7
+			VAR _Precip7Days =
+				CALCULATE(
+					[Total Nedbør (mm)],
+					DATESBETWEEN('Dim Date'[date], _7DaysAgo, _CurrentDate)
+				)
+			RETURN IF(ISBLANK(_Precip7Days), BLANK(), _Precip7Days)
+		formatString: #,##0.0 "mm"
+		lineageTag: m_nedboer7d
+
+	/// Nedbør YoY Endring (mm)
+	/// Sammenligner nedbør med samme periode i fjor
+	measure 'Nedbør YoY Endring (mm)' =
+			VAR _CurrentYear = [Total Nedbør (mm)]
+			VAR _LastYear =
+				CALCULATE(
+					[Total Nedbør (mm)],
+					SAMEPERIODLASTYEAR('Dim Date'[date])
+				)
+			VAR _Change = _CurrentYear - _LastYear
+			RETURN IF(ISBLANK(_CurrentYear) || ISBLANK(_LastYear), BLANK(), _Change)
+		formatString: +#,##0;-#,##0;0 "mm"
+		lineageTag: m_nedboeryoy
+
+	/// Tørreste Stasjon
+	/// Returnerer navnet på stasjonen med minst nedbør
+	measure 'Tørreste Stasjon' =
+			VAR _DriestStation =
+				TOPN(
+					1,
+					SUMMARIZE(
+						'Dim Weather Station',
+						'Dim Weather Station'[station_name],
+						"TotalPrecip", [Total Nedbør (mm)]
+					),
+					[TotalPrecip],
+					ASC
+				)
+			VAR _StationName = MAXX(_DriestStation, 'Dim Weather Station'[station_name])
+			RETURN IF(ISBLANK(_StationName), "Ingen data", _StationName)
+		lineageTag: m_torreste
+
+	/// Våteste Stasjon
+	/// Returnerer navnet på stasjonen med mest nedbør
+	measure 'Våteste Stasjon' =
+			VAR _WettestStation =
+				TOPN(
+					1,
+					SUMMARIZE(
+						'Dim Weather Station',
+						'Dim Weather Station'[station_name],
+						"TotalPrecip", [Total Nedbør (mm)]
+					),
+					[TotalPrecip],
+					DESC
+				)
+			VAR _StationName = MAXX(_WettestStation, 'Dim Weather Station'[station_name])
+			RETURN IF(ISBLANK(_StationName), "Ingen data", _StationName)
+		lineageTag: m_vateste
+
+	/// Nedbør Trend Indikator
+	/// Viser om nedbøren øker eller synker (siste 7 vs forrige 7 dager)
+	measure 'Nedbør Trend Indikator' =
+			VAR _CurrentDate = MAX('Dim Date'[date])
+			VAR _Last7Days =
+				CALCULATE(
+					[Total Nedbør (mm)],
+					DATESBETWEEN('Dim Date'[date], _CurrentDate - 7, _CurrentDate)
+				)
+			VAR _Previous7Days =
+				CALCULATE(
+					[Total Nedbør (mm)],
+					DATESBETWEEN('Dim Date'[date], _CurrentDate - 14, _CurrentDate - 7)
+				)
+			VAR _Change = _Last7Days - _Previous7Days
+			VAR _Trend =
+				SWITCH(
+					TRUE(),
+					_Change > 10, "↑ Øker",
+					_Change < -10, "↓ Synker",
+					"→ Stabil"
+				)
+			RETURN IF(ISBLANK(_Last7Days) || ISBLANK(_Previous7Days), BLANK(), _Trend)
+		lineageTag: m_nedboertrend
+
+	/// nedbor_mm
+	/// Legacy field name - maps to precipitation_daily_mm for backward compatibility
+	measure nedbor_mm = SUM('Fact Weather'[precipitation_daily_mm])
+		formatString: #,##0.0 "mm"
+		lineageTag: m_nedbor_mm
+
+	/// =======================================================
+	/// EKSTREMVERDIER & STØRSTE ENDRINGER - NEDBØR
+	/// =======================================================
+	/// Største Daglig Nedbør - Alle Stasjoner (mm)
+	/// Høyeste registrerte døgnnedbør på tvers av alle stasjoner
+	measure 'Største Daglig Nedbør - Alle Stasjoner (mm)' =
+			VAR _MaxPrecip = MAX('Fact Weather'[precipitation_daily_mm])
+			RETURN IF(ISBLANK(_MaxPrecip), BLANK(), _MaxPrecip)
+		formatString: 0.0 "mm"
+		lineageTag: m_maxdagnedbor
+
+	/// Dato for Største Nedbør
+	/// Returnerer datoen med høyest registrert nedbør
+	measure 'Dato for Største Nedbør' =
+			VAR _MaxPrecip = [Største Daglig Nedbør - Alle Stasjoner (mm)]
+			VAR _DateOfMax =
+				CALCULATE(
+					MAX('Dim Date'[date]),
+					FILTER(
+						'Fact Weather',
+						'Fact Weather'[precipitation_daily_mm] = _MaxPrecip
+					)
+				)
+			RETURN IF(ISBLANK(_DateOfMax), BLANK(), _DateOfMax)
+		formatString: Short Date
+		lineageTag: m_datostornedbor
+
+	/// Stasjon med Største Nedbør
+	/// Identifiserer værstasjon med høyest registrert døgnnedbør
+	measure 'Stasjon med Største Nedbør' =
+			VAR _MaxPrecip = [Største Daglig Nedbør - Alle Stasjoner (mm)]
+			VAR _StationName =
+				CALCULATE(
+					MAX('Dim Weather Station'[station_name]),
+					FILTER(
+						'Fact Weather',
+						'Fact Weather'[precipitation_daily_mm] = _MaxPrecip
+					)
+				)
+			RETURN IF(ISBLANK(_StationName), "Ingen data", _StationName)
+		lineageTag: m_stasjonmaxnedbor
+
+	/// Største Ukenedbør (mm)
+	/// Høyeste nedbørsum over en 7-dagers periode
+	measure 'Største Ukenedbør (mm)' =
+			VAR _MaxWeeklyPrecip =
+				MAXX(
+					SUMMARIZE('Dim Date', 'Dim Date'[date]),
+					VAR _CurrentDate = 'Dim Date'[date]
+					VAR _7DaysAgo = _CurrentDate - 7
+					RETURN
+						CALCULATE(
+							[Total Nedbør (mm)],
+							DATESBETWEEN('Dim Date'[date], _7DaysAgo, _CurrentDate)
+						)
+				)
+			RETURN IF(ISBLANK(_MaxWeeklyPrecip), BLANK(), _MaxWeeklyPrecip)
+		formatString: #,##0.0 "mm"
+		lineageTag: m_maxukenedbor
+
+	/// Antall Kraftige Nedbørsdager (>20mm)
+	/// Teller dager med kraftig nedbør (>20mm regnes som kraftig nedbør)
+	measure 'Antall Kraftige Nedbørsdager (>20mm)' =
+			VAR _HeavyRainDays =
+				CALCULATE(
+					DISTINCTCOUNT('Fact Weather'[date_key]),
+					'Fact Weather'[precipitation_daily_mm] > 20
+				)
+			RETURN IF(ISBLANK(_HeavyRainDays) || _HeavyRainDays = 0, 0, _HeavyRainDays)
+		formatString: #,##0 "dager"
+		lineageTag: m_kraftignedbor
+
+	/// Antall Tørre Dager (<1mm)
+	/// Teller dager med minimal eller ingen nedbør
+	measure 'Antall Tørre Dager (<1mm)' =
+			VAR _DryDays =
+				CALCULATE(
+					DISTINCTCOUNT('Fact Weather'[date_key]),
+					'Fact Weather'[precipitation_daily_mm] < 1
+				)
+			RETURN IF(ISBLANK(_DryDays) || _DryDays = 0, 0, _DryDays)
+		formatString: #,##0 "dager"
+		lineageTag: m_torredager
+
+	/// Nedbør Variasjon (Standardavvik)
+	/// Måler variasjon i nedbørsmønstre - høyere = mer uforutsigbart
+	measure 'Nedbør Variasjon (Standardavvik)' =
+			VAR _StdDev = STDEV.P('Fact Weather'[precipitation_daily_mm])
+			RETURN IF(ISBLANK(_StdDev), BLANK(), _StdDev)
+		formatString: 0.0 "mm"
+		lineageTag: m_nedborvariasjon
+
+	/// Gjennomsnittlig Ukeendring - Nedbør (mm)
+	/// Gjennomsnittlig endring i ukentlig nedbørsum
+	measure 'Gjennomsnittlig Ukeendring - Nedbør (mm)' =
+			VAR _AvgWeeklyChange =
+				AVERAGEX(
+					SUMMARIZE('Dim Date', 'Dim Date'[date]),
+					VAR _CurrentWeek = [Nedbør Siste 7 Dager (mm)]
+					VAR _PreviousWeek =
+						CALCULATE(
+							[Nedbør Siste 7 Dager (mm)],
+							DATEADD('Dim Date'[date], -7, DAY)
+						)
+					RETURN ABS(_CurrentWeek - _PreviousWeek)
+				)
+			RETURN IF(ISBLANK(_AvgWeeklyChange), BLANK(), _AvgWeeklyChange)
+		formatString: 0.0 "mm"
+		lineageTag: m_avgukeendring
+
+	/// =======================================================
+	/// ADDITIONAL MEASURES FOR YOY REPORT VIEWS
+	/// =======================================================
+	/// Avg Content GWh
+	/// Average reservoir content in GWh (used by period comparison views)
+	measure 'Avg Content GWh' = AVERAGE('Fact Reservoir'[magasininnhold_GWh])
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_avgcontentgwh
+
+	/// Avg Content GWh PY
+	/// Average reservoir content previous year
+	measure 'Avg Content GWh PY' =
+			CALCULATE(
+				[Avg Content GWh],
+				SAMEPERIODLASTYEAR('Dim Date'[date])
+			)
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_avgcontentgwhpy
+
+	/// Total Magasininnhold PY (GWh)
+	/// Total reservoir content previous year (alias for backwards compatibility)
+	measure 'Total Magasininnhold PY (GWh)' = [Magasininnhold Forrige År (GWh)]
+		formatString: #,##0.0 "GWh"
+		lineageTag: m_totalmagpy
+
+	partition _Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+

@@ -1,0 +1,39 @@
+# Power BI files
+*.pbix
+*.pbit
+*.pbids
+
+# Backup files
+*.bak
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache folders
+.cache/
+cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Visual Studio / VS Code
+.vscode/
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Local settings
+*.local.settings.json
+
+# Logs
+*.log
+logs/
+
+# Database connection strings (if any sensitive data)
+*.connection

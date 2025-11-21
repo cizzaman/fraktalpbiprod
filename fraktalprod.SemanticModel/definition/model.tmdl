@@ -1,0 +1,44 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["KPI Measures","Dim Date","Dim Area","Dim Month","Dim Weather Station","Fact Reservoir","Fact Weather","Report - Extremes","Report - Largest Changes","Report - Period Comparison","Report - Weather Daily"]
+
+annotation __PBI_TimeIntelligenceEnabled = 0
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'Dim Date'
+ref table 'Dim Area'
+ref table 'Fact Weather'
+ref table 'Dim Weather Station'
+ref table 'Fact Reservoir'
+ref table 'Dim Month'
+ref table 'Report - Extremes'
+ref table 'Report - Largest Changes'
+ref table 'Report - Period Comparison'
+ref table 'Report - Weather Daily'
+ref table 'KPI Measures'
+
+ref role 1
+ref role 2
+ref role 3
+ref role 4
+ref role 5
+ref role 6
+ref role 7
+ref role 8
+ref role 9
+ref role 10
+ref role 11
+ref role 12
+ref role 13
+ref role 14
+ref role 15
+
+ref cultureInfo en-US
+

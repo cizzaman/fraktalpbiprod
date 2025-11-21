@@ -1,0 +1,88 @@
+table 'Fact Weather'
+	lineageTag: cb8d6bb8-ae0f-47f4-a59e-ed91543d1491
+
+	column fact_weather_id
+		dataType: int64
+		formatString: 0
+		lineageTag: d0d19f1a-5266-4c2a-a1bc-43b6201b7469
+		summarizeBy: sum
+		sourceColumn: fact_weather_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_key
+		dataType: int64
+		formatString: 0
+		lineageTag: c650bdfd-b4b4-4a94-ba0f-cb6f392e3e61
+		summarizeBy: none
+		sourceColumn: date_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column station_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 588f4734-10b5-4b2f-be4d-abb5c62fc22f
+		summarizeBy: none
+		sourceColumn: station_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column precipitation_1h_sum_mm
+		dataType: double
+		lineageTag: 53198889-8b55-4df0-9144-b56088050150
+		summarizeBy: sum
+		sourceColumn: precipitation_1h_sum_mm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column precipitation_24h_sum_mm
+		dataType: double
+		lineageTag: 7e540a24-78d1-41cc-ad21-00c4d9f31ec6
+		summarizeBy: sum
+		sourceColumn: precipitation_24h_sum_mm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column precipitation_daily_mm
+		dataType: double
+		lineageTag: 268fdc3d-2aca-4224-84f9-cec43238bd9b
+		summarizeBy: sum
+		sourceColumn: precipitation_daily_mm
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column measurement_count
+		dataType: int64
+		formatString: 0
+		lineageTag: 5e89db3f-842d-4ccd-8562-a5fd26a66163
+		summarizeBy: sum
+		sourceColumn: measurement_count
+
+		annotation SummarizationSetBy = Automatic
+
+	column loaded_datetime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 769a0ee7-2219-436f-8ae0-731ad51ef546
+		summarizeBy: none
+		sourceColumn: loaded_datetime
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Fact Weather' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Databases("localhost"),
+				    DyrWatt_Analytics = Source{[Name="DyrWatt_Analytics"]}[Data],
+				    dw_fact_weather = DyrWatt_Analytics{[Schema="dw",Item="fact_weather"]}[Data]
+				in
+				    dw_fact_weather
+

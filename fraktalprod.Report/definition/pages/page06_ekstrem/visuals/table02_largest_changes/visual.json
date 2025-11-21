@@ -1,0 +1,233 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "table02_largest_changes",
+  "position": {
+    "x": 251.25,
+    "y": 87.5,
+    "z": 1000,
+    "height": 260,
+    "width": 600,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Largest Changes"
+                    }
+                  },
+                  "Property": "Date"
+                }
+              },
+              "queryRef": "Report - Largest Changes.Date",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Largest Changes"
+                    }
+                  },
+                  "Property": "Area Code"
+                }
+              },
+              "queryRef": "Report - Largest Changes.Area Code",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Largest Changes"
+                        }
+                      },
+                      "Property": "Filling Rate %"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Avg(Report - Largest Changes.Filling Rate %)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Largest Changes"
+                        }
+                      },
+                      "Property": "Daily Change %"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Avg(Report - Largest Changes.Daily Change %)",
+              "active": true
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "Report - Largest Changes"
+                        }
+                      },
+                      "Property": "Net Change GWh"
+                    }
+                  },
+                  "Function": 3
+                }
+              },
+              "queryRef": "Avg(Report - Largest Changes.Net Change GWh)",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Largest Changes"
+                    }
+                  },
+                  "Property": "Change Magnitude"
+                }
+              },
+              "queryRef": "Report - Largest Changes.Change Magnitude",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Report - Largest Changes"
+                    }
+                  },
+                  "Property": "Change Direction"
+                }
+              },
+              "queryRef": "Report - Largest Changes.Change Direction",
+              "active": true
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "Report - Largest Changes"
+                      }
+                    },
+                    "Property": "Daily Change %"
+                  }
+                },
+                "Function": 3
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {}
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "gridVertical": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "gridHorizontal": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "rowPadding": {
+              "expr": {
+                "Literal": {
+                  "Value": "6D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFFFF'"
+                    }
+                  }
+                }
+              }
+            },
+            "backColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#2C3E50'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "total": [
+        {
+          "properties": {
+            "totals": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
